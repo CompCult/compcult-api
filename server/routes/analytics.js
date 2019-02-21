@@ -3,7 +3,7 @@ var router = express.Router();
 
 var Quiz = require('../models/quiz.js');
 var QuizAnswer = require('../models/quiz_answer.js');
-const tryCatch = require('../middlewares/tryCatch');
+const tryCatch = require('../middlewares/awaitHandler');
 
 router.get('/quiz/:quizId', tryCatch(async (req, res) => {
   const alternativesAmount = await QuizAnswer

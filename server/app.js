@@ -1,5 +1,4 @@
 var express = require('express');
-var logger = require('morgan');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var path = require('path');
@@ -16,8 +15,8 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 var app = express();
 
+require('./startup/logger')(app);
 app.use(express.static(path.join(__dirname, '../client')));
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true,
