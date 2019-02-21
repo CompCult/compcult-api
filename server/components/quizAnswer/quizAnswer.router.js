@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var User = require('../components/user/user.model.js');
-var Quiz = require('../models/quiz.js');
-var QuizAnswer = require('../models/quiz_answer.js');
+var User = require('../user/user.model.js');
+var Quiz = require('../quiz/quiz.model.js');
+var QuizAnswer = require('./quizAnswer.model.js');
 
 // Index
 router.get('/', function (req, res) {
