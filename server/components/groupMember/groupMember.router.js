@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 var bcrypt = require('bcryptjs');
 
-var User = require('../components/user/user.model.js');
-var Group = require('../models/group.js');
-var GroupMember = require('../models/group_member.js');
+var User = require('../user/user.model');
+var Group = require('../group/group.model');
+var GroupMember = require('./groupMember.model');
 
 // Index
 router.get('/', function (req, res) {

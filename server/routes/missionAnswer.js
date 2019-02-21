@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var User = require('../components/user/user.model.js');
-var Group = require('../models/group.js');
+var Group = require('../components/group/group.model');
 var Mission = require('../models/mission.js');
 var MissionAnswer = require('../models/mission_answer.js');
 var Uploads = require('../upload.js');

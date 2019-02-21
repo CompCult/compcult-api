@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
-var User = require('../components/user/user.model.js');
-var Group = require('../models/group.js');
-var Mailer = require('../mailer.js');
-var GroupMember = require('../models/group_member.js');
+var User = require('../user/user.model.js');
+var Group = require('./group.model.js');
+var Mailer = require('../../mailer.js');
+var GroupMember = require('../groupMember/groupMember.model.js');
 
 // Index
 router.get('/', function (req, res) {
