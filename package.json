@@ -1,8 +1,8 @@
 {
   "name": "mean-auth",
   "scripts": {
-    "start": "node server/server.js",
-    "dev": "nodemon server/server.js",
+    "start": "node server/app.js",
+    "dev": "nodemon server/app.js",
     "test": "jest --watchAll --verbose --coverage",
     "lint": "eslint --ignore-path .gitignore server",
     "lint:fix": "eslint --ignore-path .gitignore server --fix"

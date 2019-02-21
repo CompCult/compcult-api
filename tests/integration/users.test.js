@@ -6,7 +6,7 @@ describe('/users', () => {
   let server;
   
   beforeEach(() => {
-    server = require('../../server/server');
+    server = require('../../server/app');
   });
   afterEach(async () => { 
     await server.close();

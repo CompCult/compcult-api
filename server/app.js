@@ -1,4 +1,5 @@
 const express = require('express');
+const config = require('config');
 
 const app = express();
 
@@ -13,4 +14,10 @@ require('./startup/routes')(app);
 
 require('./startup/errors')(app);
 
-module.exports = app;
+const port = config.get('port');
+
+const server = app.listen(port, () =>
+  console.log(`Listen on port ${port}`)
+);
+
+module.exports = server;
