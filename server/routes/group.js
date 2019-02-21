@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var User = require('../models/user.js');
+var User = require('../components/user/user.model.js');
 var Group = require('../models/group.js');
 var Mailer = require('../mailer.js');
 var GroupMember = require('../models/group_member.js');

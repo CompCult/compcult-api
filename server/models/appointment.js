@@ -6,7 +6,7 @@ var Appointment = new Schema({
   _id: Number,
   _user: {
     type: Number,
-    ref: './user.js'
+    ref: 'User'
   },
   name: String,
   description: String,

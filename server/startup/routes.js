@@ -1,5 +1,5 @@
 const general = require('../routes/general.js');
-const users = require('../routes/user.js');
+const users = require('../components/user/user.router.js');
 const missions = require('../routes/mission.js');
 const missionsAnswer = require('../routes/missionAnswer.js');
 const quizzes = require('../routes/quiz.js');

@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var Post = require('../models/post.js');
-var User = require('../models/user.js');
+var User = require('../components/user/user.model.js');
 var Uploads = require('../upload.js');
 
 // Index

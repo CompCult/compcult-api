@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const validate = require('../middlewares/validate');
-const { validateUser } = require('../models/user');
-const awaitHandler = require('../middlewares/awaitHandler');
+const validate = require('../../middlewares/validate');
+const { validateUser } = require('./user.model');
+const awaitHandler = require('../../middlewares/awaitHandler');
 
-const userController = require('../controllers/user');
+const userController = require('./user.controller');
 
 /**
  * @api {get} /users 01. Listar usuários

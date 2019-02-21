@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var User = require('../models/user.js');
+var User = require('../components/user/user.model.js');
 var Group = require('../models/group.js');
 var Mission = require('../models/mission.js');
 var MissionAnswer = require('../models/mission_answer.js');
