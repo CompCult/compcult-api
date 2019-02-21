@@ -1,8 +1,8 @@
 {
   "name": "mean-auth",
   "scripts": {
-    "start": "node server/server.js",
-    "dev": "nodemon server/server.js",
+    "start": "node server/app.js",
+    "dev": "nodemon server/app.js",
     "test": "jest --watchAll --verbose --coverage",
     "lint": "eslint --ignore-path .gitignore server",
     "lint:fix": "eslint --ignore-path .gitignore server --fix"
@@ -23,7 +23,7 @@
     "express-session": "^1.13.0",
     "joi": "^14.3.1",
     "moment": "^2.22.0",
-    "mongoose": "^4.4.5",
+    "mongoose": "^5.4.14",
     "mongoose-paginate": "^5.0.3",
     "mongoose-sequence": "^4.0.0",
     "morgan": "^1.7.0",

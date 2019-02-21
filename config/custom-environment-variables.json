@@ -1,3 +1,4 @@
 {
-    "db": "MONGO_PATH"
+    "db": "MONGO_PATH",
+    "port": "PORT"
 }
