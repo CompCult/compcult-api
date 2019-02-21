@@ -1,14 +1,14 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var autoInc   = require('mongoose-sequence')(mongoose);
+var autoInc = require('mongoose-sequence')(mongoose);
 
 var GroupMember = new Schema({
   _id: Number,
-  _user: { 
-    type: Number, 
-    ref: './user.js' 
+  _user: {
+    type: Number,
+    ref: './user.js'
   },
-  _group: { 
+  _group: {
     type: Number,
     ref: './group.js'
   },
@@ -19,5 +19,5 @@ var GroupMember = new Schema({
   }
 });
 
-GroupMember.plugin(autoInc, {id: "member_id"});
+GroupMember.plugin(autoInc, { id: 'member_id' });
 module.exports = mongoose.model('group_member', GroupMember);

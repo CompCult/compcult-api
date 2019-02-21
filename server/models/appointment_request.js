@@ -1,12 +1,12 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var autoInc   = require('mongoose-sequence')(mongoose);
+var autoInc = require('mongoose-sequence')(mongoose);
 
 var AppointmentRequest = new Schema({
   _id: Number,
-  _user: { 
-    type: Number, 
-    ref: './user.js' 
+  _user: {
+    type: Number,
+    ref: './user.js'
   },
   _appointment: {
     type: Number,
@@ -14,7 +14,7 @@ var AppointmentRequest = new Schema({
   },
   status: {
     type: String,
-    enum: ['Aprovado','Rejeitado','Pendente']
+    enum: ['Aprovado', 'Rejeitado', 'Pendente']
   },
   message: String,
   updated_at: Date,
@@ -24,5 +24,5 @@ var AppointmentRequest = new Schema({
   }
 });
 
-AppointmentRequest.plugin(autoInc, {id: "appointment_request_id"});
+AppointmentRequest.plugin(autoInc, { id: 'appointment_request_id' });
 module.exports = mongoose.model('appointment_request', AppointmentRequest);

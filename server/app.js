@@ -11,18 +11,17 @@ var cors = require('cors');
 var aws = require('aws-sdk');
 const config = require('config');
 
-
 // mongoose local
-//mongoose.connect('mongodb://localhost/mean-auth');
-// mongoose 
+// mongoose.connect('mongodb://localhost/mean-auth');
+// mongoose
 mongoose.Promise = global.Promise;
 mongoose.connect(config.get('db'))
   .then(() => console.log(`Connected to ${config.get('db')}`));
 
-//Get the default connection
+// Get the default connection
 var db = mongoose.connection;
 
-//Bind connection to error event (to get notification of connection errors)
+// Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // create instance of express
@@ -33,13 +32,13 @@ app.use(express.static(path.join(__dirname, '../client')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-    extended: true,
-    limit: '100mb'
+  extended: true,
+  limit: '100mb'
 }));
 app.use(cors());
 
-//-------------------------------------------------------------------------
-app.get('/', function(req, res) {
+// -------------------------------------------------------------------------
+app.get('/', function (req, res) {
   res.send('This API is running, baby!');
 });
 
@@ -80,10 +79,10 @@ app.use('/appointment', appointment);
 app.use('/appointment_requests', appointment_request);
 app.use('/places', places);
 app.use('/analytics', analytics);
-//-------------------------------------------------------------------------
+// -------------------------------------------------------------------------
 
 // error hndlers
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);

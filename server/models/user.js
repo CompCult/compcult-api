@@ -56,7 +56,7 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-userSchema.plugin(autoInc, {id: "user_id"});
+userSchema.plugin(autoInc, { id: 'user_id' });
 userSchema.plugin(mongoosePaginate);
 
 const User = mongoose.model('users', userSchema);

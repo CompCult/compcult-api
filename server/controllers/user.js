@@ -1,4 +1,4 @@
-const bcrypt  = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 
 const { User, validateUser } = require('../models/user.js');
@@ -7,31 +7,31 @@ const Mailer = require('../mailer.js');
 const utils = require('../utils.js');
 
 async function listUsers (req, res) {
-  const query = _.omit(req.query, ['page', 'limit'])
-  const regexProperties = ['name']
-  const regexQuery = utils.regexQuery(query, regexProperties)
+  const query = _.omit(req.query, ['page', 'limit']);
+  const regexProperties = ['name'];
+  const regexQuery = utils.regexQuery(query, regexProperties);
 
   if (req.query.page) {
-    if (!req.query.limit) res.status(400).send('A page parameter was passed without limit')
-    
+    if (!req.query.limit) res.status(400).send('A page parameter was passed without limit');
+
     const config = {
       page: Number(req.query.page),
       limit: Number(req.query.limit)
-    }
-    const users = await User.paginate(regexQuery, config)
-    res.send(users)
+    };
+    const users = await User.paginate(regexQuery, config);
+    res.send(users);
   } else {
-    const users = await User.find(regexQuery)
-    res.send(users)
+    const users = await User.find(regexQuery);
+    res.send(users);
   }
 }
 
 function findUserById (req, res) {
-  User.findById(req.params.user_id, function(err, usuario) {
+  User.findById(req.params.user_id, function (err, usuario) {
     if (err) {
       res.status(400).send(err);
-    } else if (!usuario){
-      res.status(404).send("Usuário não encontrado");
+    } else if (!usuario) {
+      res.status(404).send('Usuário não encontrado');
     } else {
       res.status(200).json(usuario);
     }
@@ -55,17 +55,17 @@ async function createUser (req, res, next) {
 }
 
 function updatePassword (req, res) {
-  User.findOne({ email: req.query.email}, function(err, user) {
+  User.findOne({ email: req.query.email }, function (err, user) {
     if (err) {
       res.status(400).send(err);
-    } else if (!user){
-      res.status(404).send("Usuário não encontrado");
+    } else if (!user) {
+      res.status(404).send('Usuário não encontrado');
     } else {
       if (user.new_password) {
         user.password = user.new_password;
         user.new_password = null;
 
-        user.save(function(err) {
+        user.save(function (err) {
           if (err) {
             return res.status(403).send(err);
           } else {
@@ -73,7 +73,7 @@ function updatePassword (req, res) {
           }
         });
       } else {
-          return res.status(404).send('Nova senha não encontrada, tente novamente.');
+        return res.status(404).send('Nova senha não encontrada, tente novamente.');
       }
     }
   });
@@ -85,27 +85,27 @@ function recoveryPassword (req, res) {
   let html = "<div style='width:90%; margin-left:auto; margin-right:auto; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px;'>" +
             "<div style='font-family: Arial; border-color: #502274;'>" +
             "<div style='vertical-align:middle; text-align:justify;'>" +
-            "<p style='text-align:left;'>Olá!</p>" + 
-            "<p>Você está recebendo esse e-mail que foi requisitada a alteração da sua senha de acesso. Se você não fez nenhuma requisição, pode simplesmente ignorar este e-mail.</p>" +
-              "<p>Para confirmar a alteração da senha, clique no botão abaixo:</p>" + 
+            "<p style='text-align:left;'>Olá!</p>" +
+            '<p>Você está recebendo esse e-mail que foi requisitada a alteração da sua senha de acesso. Se você não fez nenhuma requisição, pode simplesmente ignorar este e-mail.</p>' +
+              '<p>Para confirmar a alteração da senha, clique no botão abaixo:</p>' +
                 "<form action='" + process.env.PASS_EDIT + req.body.email + "' method='post'>" +
                 "<input type='submit' value='Confirmar alteração de senha' style='margin-top:3px; margin-bottom:3px; background: #502274; margin-bottom: 3px; padding: 10px; text-align: center; color: white; font-weight: bold; border: 1px solid #502274;'></form>" +
-                "<p style='text-align:left;' >Bom uso,</p>" + 
-                "<p style='text-align:left;' ><b>Equipe Minha Árvore!</b></p>" + 
-                "</div></div></div>"
+                "<p style='text-align:left;' >Bom uso,</p>" +
+                "<p style='text-align:left;' ><b>Equipe Minha Árvore!</b></p>" +
+                '</div></div></div>';
 
-  User.findOne({ email: user_email }, function(err, user) {
+  User.findOne({ email: user_email }, function (err, user) {
     if (err) {
       res.status(400).send(err);
     } if (!user) {
       res.status(400).send(err);
     } else {
-      bcrypt.hash(req.body.new_password, 10, function(err, hash) {
+      bcrypt.hash(req.body.new_password, 10, function (err, hash) {
         if (err) {
           res.status(400).send(err);
         } else {
           user.new_password = hash;
-          user.save(function(err) {
+          user.save(function (err) {
             if (err) {
               return res.status(400).send(err);
             } else {
@@ -116,11 +116,11 @@ function recoveryPassword (req, res) {
         }
       });
     }
-  }); 
+  });
 }
 
 function updateUser (req, res) {
-  User.findById(req.params.user_id, function(err, user) {
+  User.findById(req.params.user_id, function (err, user) {
     if (!user) {
       res.status(400).send('Usuário não encontrado!');
     }
@@ -156,24 +156,23 @@ function updateUser (req, res) {
       user.picture = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
     };
 
-
     if (req.body.password) {
-      bcrypt.hash(req.body.password, 10, function(err, hash) {
+      bcrypt.hash(req.body.password, 10, function (err, hash) {
         user.password = hash;
-        user.save(function(err) {
+        user.save(function (err) {
           if (err) {
             res.status(400).send(err);
           } else {
-            res.status(200).send("Usuário atualizado.");
+            res.status(200).send('Usuário atualizado.');
           }
         });
       });
     } else {
-      user.save(function(err) {
+      user.save(function (err) {
         if (err) {
           res.status(400).send(err);
         } else {
-          res.status(200).send("Usuário atualizado.");
+          res.status(200).send('Usuário atualizado.');
         }
       });
     }
@@ -181,13 +180,13 @@ function updateUser (req, res) {
 }
 
 function authenticate (req, res) {
-  User.findOne({'email': req.body.email}, function(error, user) {
+  User.findOne({ 'email': req.body.email }, function (error, user) {
     if (!user) {
       res.status(404).send('Usuário não encontrado.');
     } else if (_userIsBanned(user.banned_until)) {
-        res.status(400).send('Usuário banido até ' + user.banned_until.toLocaleString())
+      res.status(400).send('Usuário banido até ' + user.banned_until.toLocaleString());
     } else {
-      bcrypt.compare(req.body.password, user.password, function(err, result) {
+      bcrypt.compare(req.body.password, user.password, function (err, result) {
         if (err) {
           res.status(400).send(err);
         } else {
@@ -199,16 +198,15 @@ function authenticate (req, res) {
         }
       });
     }
-    
   });
 }
 
 function deleteUser (req, res) {
-  User.remove({ _id: req.params.user_id }, function(err) {
+  User.remove({ _id: req.params.user_id }, function (err) {
     if (err) {
       res.status(400).send(err);
     } else {
-      res.status(200).send("Usuário removido.");
+      res.status(200).send('Usuário removido.');
     }
   });
 }
@@ -221,7 +219,7 @@ function _userIsBanned (date) {
     }
   }
 
-  return false;  
+  return false;
 }
 
 module.exports = {
@@ -233,4 +231,4 @@ module.exports = {
   updateUser,
   authenticate,
   deleteUser
-}
+};

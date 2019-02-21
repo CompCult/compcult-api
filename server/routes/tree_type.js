@@ -5,9 +5,9 @@ var TreeType = require('../models/mytree_exclusives/tree_type.js');
 var Place = require('../models/place.js');
 var Uploads = require('../upload.js');
 
-//Index
-router.get('/', function(req, res) {
-  TreeType.find({}, async function(err, trees) {
+// Index
+router.get('/', function (req, res) {
+  TreeType.find({}, async function (err, trees) {
     if (err) {
       res.status(400).send(err);
     } else {
@@ -20,7 +20,7 @@ router.get('/', function(req, res) {
       //   try {
       //     promises = await places.map(inject_place);
       //   } catch (err) {
-      //     res.status(400).send(err); 
+      //     res.status(400).send(err);
       //   }
 
       //   await Promise.all(promises).then(function(results) {
@@ -38,12 +38,12 @@ router.get('/', function(req, res) {
   });
 });
 
-inject_place = function(place) {
+inject_place = function (place) {
   return Place.findById(place).exec();
-}
+};
 
-router.get('/:type_id', function(req, res) {
-  TreeType.findById(req.params.type_id, function(err, tree) {
+router.get('/:type_id', function (req, res) {
+  TreeType.findById(req.params.type_id, function (err, tree) {
     if (err) {
       res.status(400).send(err);
     } else {
@@ -52,15 +52,15 @@ router.get('/:type_id', function(req, res) {
   });
 });
 
-//Find by params
-router.get('/query/fields', function(req, res) {
-  TreeType.find(req.query, async function(err, trees) {
+// Find by params
+router.get('/query/fields', function (req, res) {
+  TreeType.find(req.query, async function (err, trees) {
     if (err) {
       res.status(400).send(err);
-    } else if (!trees){
-      res.status(404).send("Tipo não encontrado");
+    } else if (!trees) {
+      res.status(404).send('Tipo não encontrado');
     } else {
-      final_result = []
+      final_result = [];
 
       for (var i = 0; i < trees.length; i++) {
         let promises;
@@ -69,33 +69,33 @@ router.get('/query/fields', function(req, res) {
         try {
           promises = await places.map(inject_place);
         } catch (err) {
-          res.status(400).send(err); 
+          res.status(400).send(err);
         }
 
-        await Promise.all(promises).then(function(results) {
+        await Promise.all(promises).then(function (results) {
           let string = JSON.stringify(trees[i]);
           let final_tree = JSON.parse(string);
           final_tree._places = results;
 
           final_result.push(final_tree);
 
-          if(i == trees.length -1) res.status(200).json(final_result);
+          if (i == trees.length - 1) res.status(200).json(final_result);
         });
       };
     }
   });
 });
 
-//Create
-router.post('/', function(req, res) {
-  var type                = new TreeType();
-  type.name               = req.body.name;
-  type.description        = req.body.description;
-  type.ammount_available  = req.body.ammount_available;
-  type._places            = req.body._places;
+// Create
+router.post('/', function (req, res) {
+  var type = new TreeType();
+  type.name = req.body.name;
+  type.description = req.body.description;
+  type.ammount_available = req.body.ammount_available;
+  type._places = req.body._places;
   if (req.body.photo) type.photo = req.body.photo;
 
-  type.save(function(err) {
+  type.save(function (err) {
     if (err) {
       res.status(400).send(err);
     } else {
@@ -105,16 +105,15 @@ router.post('/', function(req, res) {
 });
 
 // Update
-router.put('/:tree_id', function(req, res) {
-  TreeType.findById(req.params.tree_id, function(err, type) {
-	  if (req.body.name) type.name             			         = req.body.name;
-	  if (req.body.description) type.description             = req.body.description;
+router.put('/:tree_id', function (req, res) {
+  TreeType.findById(req.params.tree_id, function (err, type) {
+	  if (req.body.name) type.name = req.body.name;
+	  if (req.body.description) type.description = req.body.description;
     if (req.body.ammount_available) type.ammount_available = req.body.ammount_available;
-    if (req.body._places) type._places                     = req.body._places;
-    if (req.body.photo) type.photo                         = req.body.photo;
-    
+    if (req.body._places) type._places = req.body._places;
+    if (req.body.photo) type.photo = req.body.photo;
 
-    type.save(function(err) {
+    type.save(function (err) {
       if (err) {
         res.status(400).send(err);
       } else {
@@ -124,10 +123,9 @@ router.put('/:tree_id', function(req, res) {
   });
 });
 
-
 // Update
-router.put('/remove/:tree_id', function(req, res) {
-  TreeType.findById(req.params.tree_id, function(err, type) {
+router.put('/remove/:tree_id', function (req, res) {
+  TreeType.findById(req.params.tree_id, function (err, type) {
     if (req.body._places) {
       var index = type._places.indexOf(req.body._places);
       if (index > -1) {
@@ -135,7 +133,7 @@ router.put('/remove/:tree_id', function(req, res) {
       }
     }
 
-    type.save(function(err) {
+    type.save(function (err) {
       if (err) {
         res.status(400).send(err);
       } else {
@@ -146,12 +144,12 @@ router.put('/remove/:tree_id', function(req, res) {
 });
 
 // Delete
-router.delete('/:tree_id', function(req, res) {
-  TreeType.remove({ _id: req.params.tree_id }, function(err) {
+router.delete('/:tree_id', function (req, res) {
+  TreeType.remove({ _id: req.params.tree_id }, function (err) {
     if (err) {
       res.status(400).send(err);
     } else {
-      res.status(200).send("Árvore removida.");
+      res.status(200).send('Árvore removida.');
     }
   });
 });

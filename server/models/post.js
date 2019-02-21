@@ -1,18 +1,18 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var autoInc   = require('mongoose-sequence')(mongoose);
+var autoInc = require('mongoose-sequence')(mongoose);
 
 var Post = new Schema({
   _id: Number,
-  _user: { 
-    type: Number, 
-    ref: './user.js' 
+  _user: {
+    type: Number,
+    ref: './user.js'
   },
   picture: String,
   audio: String,
   video: String,
   text_msg: String,
-  location_lat: String, 
+  location_lat: String,
   location_lng: String,
   points: {
     type: Number,
@@ -24,5 +24,5 @@ var Post = new Schema({
   }
 });
 
-Post.plugin(autoInc, {id: "post_id"});
+Post.plugin(autoInc, { id: 'post_id' });
 module.exports = mongoose.model('post', Post);

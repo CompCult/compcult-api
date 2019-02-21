@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var autoInc   = require('mongoose-sequence')(mongoose);
+var autoInc = require('mongoose-sequence')(mongoose);
 
 var Place = new Schema({
   _id: Number,
@@ -14,5 +14,5 @@ var Place = new Schema({
   }
 });
 
-Place.plugin(autoInc, {id: "place_id"});
+Place.plugin(autoInc, { id: 'place_id' });
 module.exports = mongoose.model('place', Place);

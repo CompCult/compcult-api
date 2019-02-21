@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var autoInc   = require('mongoose-sequence')(mongoose);
+var autoInc = require('mongoose-sequence')(mongoose);
 
 var Group = new Schema({
   _id: Number,
@@ -12,5 +12,5 @@ var Group = new Schema({
   }
 });
 
-Group.plugin(autoInc, {id: "group_id"});
+Group.plugin(autoInc, { id: 'group_id' });
 module.exports = mongoose.model('group', Group);

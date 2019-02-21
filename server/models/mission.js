@@ -1,13 +1,13 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var autoInc   = require('mongoose-sequence')(mongoose);
+var autoInc = require('mongoose-sequence')(mongoose);
 
 var Mission = new Schema({
   _id: Number,
   name: String,
-  _user: { 
-    type: Number, 
-    ref: './user.js' 
+  _user: {
+    type: Number,
+    ref: './user.js'
   },
   description: String,
   points: Number,
@@ -35,5 +35,5 @@ var Mission = new Schema({
   }
 });
 
-Mission.plugin(autoInc, {id: "mission_id"});
+Mission.plugin(autoInc, { id: 'mission_id' });
 module.exports = mongoose.model('mission', Mission);

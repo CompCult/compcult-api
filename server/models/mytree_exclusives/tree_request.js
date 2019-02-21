@@ -1,22 +1,23 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var autoInc   = require('mongoose-sequence')(mongoose);
+var autoInc = require('mongoose-sequence')(mongoose);
 
 var TreeRequest = new Schema({
   _id: Number,
-  _user: { 
-    type: Number, 
-    ref: '../user.js' 
-  }, _type: { 
+  _user: {
+    type: Number,
+    ref: '../user.js'
+  },
+  _type: {
     type: Number,
     ref: '../tree_type.js'
   },
   tree_name: String,
   status: {
     type: String,
-    enum: ['Aprovado','Rejeitado','Pendente', 'Plantada']
+    enum: ['Aprovado', 'Rejeitado', 'Pendente', 'Plantada']
   },
-  location_lat: String, 
+  location_lat: String,
   location_lng: String,
   quantity: Number,
   requester_name: String,
@@ -40,5 +41,5 @@ var TreeRequest = new Schema({
   planting_date: Date
 });
 
-TreeRequest.plugin(autoInc, {id: "request_id"});
+TreeRequest.plugin(autoInc, { id: 'request_id' });
 module.exports = mongoose.model('tree_request', TreeRequest);

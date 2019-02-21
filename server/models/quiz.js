@@ -1,12 +1,12 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var autoInc   = require('mongoose-sequence')(mongoose);
+var autoInc = require('mongoose-sequence')(mongoose);
 
 var Quiz = new Schema({
   _id: Number,
-  _user: { 
-    type: Number, 
-    ref: './user.js' 
+  _user: {
+    type: Number,
+    ref: './user.js'
   },
   title: String,
   description: String,
@@ -36,5 +36,5 @@ var Quiz = new Schema({
   }
 });
 
-Quiz.plugin(autoInc, {id: "quiz_id"});
+Quiz.plugin(autoInc, { id: 'quiz_id' });
 module.exports = mongoose.model('quiz', Quiz);

@@ -3,7 +3,9 @@
   "scripts": {
     "start": "node server/server.js",
     "dev": "nodemon server/server.js",
-    "test": "jest --watchAll --verbose --coverage"
+    "test": "jest --watchAll --verbose --coverage",
+    "lint": "eslint --ignore-path .gitignore server",
+    "lint:fix": "eslint --ignore-path .gitignore server --fix"
   },
   "dependencies": {
     "@google/maps": "^0.4.6",
@@ -33,6 +35,12 @@
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
+    "eslint": "^5.14.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "jest": "^23.6.0",
     "supertest": "^3.3.0"
   }
