@@ -2,7 +2,6 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var path = require('path');
-var cors = require('cors');
 const config = require('config');
 
 mongoose.Promise = global.Promise;
@@ -16,13 +15,13 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 var app = express();
 
 require('./startup/logger')(app);
+require('./startup/cors')(app);
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true,
   limit: '100mb'
 }));
-app.use(cors());
 
 app.get('/', function (req, res) {
   res.send('This API is running, baby!');
