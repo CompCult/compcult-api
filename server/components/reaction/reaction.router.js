@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var bcrypt = require('bcryptjs');
 
 var Reaction = require('./reaction.model');
 

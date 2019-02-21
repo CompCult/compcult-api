@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 function _paginate (page, limit) {
   limit = Number(limit) || 0;
   page = Number(page) || 0;

@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 
-const { User, validateUser } = require('./user.model');
+const { User } = require('./user.model');
 const Uploads = require('../../upload');
 const Mailer = require('../../mailer');
 const utils = require('../../utils');
@@ -81,7 +81,6 @@ function updatePassword (req, res) {
 
 function recoveryPassword (req, res) {
   let user_email = req.body.email;
-  let new_password = req.body.new_password;
   let html = "<div style='width:90%; margin-left:auto; margin-right:auto; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px;'>" +
             "<div style='font-family: Arial; border-color: #502274;'>" +
             "<div style='vertical-align:middle; text-align:justify;'>" +

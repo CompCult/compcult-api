@@ -1,5 +1,4 @@
 var AWS = require('aws-sdk');
-var fs = require('fs');
 
 var s3 = new AWS.S3({
   accessKeyId: process.env.S3_KEY,
@@ -21,8 +20,7 @@ class Uploads {
       ContentType: 'image/jpeg'
     };
 
-    let putObjectPromise = await s3.upload(params).promise();
-    let location = putObjectPromise.Location;
+    await s3.upload(params).promise();
   }
 
   static async uploadAudio (file, _user, stamp) {
