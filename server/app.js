@@ -1,21 +1,12 @@
 var express = require('express');
-var mongoose = require('mongoose');
 var path = require('path');
-const config = require('config');
-
-mongoose.Promise = global.Promise;
-mongoose.connect(config.get('db'))
-  .then(() => console.log(`Connected to ${config.get('db')}`));
-
-var db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 var app = express();
 
 require('./startup/logger')(app);
 require('./startup/cors')(app);
 require('./startup/parser')(app);
+require('./startup/db')();
 app.use(express.static(path.join(__dirname, '../client')));
 
 app.get('/', function (req, res) {

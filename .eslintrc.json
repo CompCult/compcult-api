@@ -1,7 +1,6 @@
 {
   "extends": "standard",
   "rules": {
-      "semi": ["error", "always"],
-      "no-console": "error"
+      "semi": ["error", "always"]
   }
 }

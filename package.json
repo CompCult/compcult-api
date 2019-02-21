@@ -23,7 +23,7 @@
     "express-session": "^1.13.0",
     "joi": "^14.3.1",
     "moment": "^2.22.0",
-    "mongoose": "^4.4.5",
+    "mongoose": "^5.4.14",
     "mongoose-paginate": "^5.0.3",
     "mongoose-sequence": "^4.0.0",
     "morgan": "^1.7.0",
