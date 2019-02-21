@@ -1,2 +1,3 @@
-# compcult-api
-API do CompCult
+# CompCult API
+
+API base do CompCult

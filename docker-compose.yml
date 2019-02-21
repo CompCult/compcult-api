@@ -1,0 +1,26 @@
+version: "2"
+
+services:
+
+  node:
+    container_name: app
+    restart: always
+    build: .
+    environment:
+      - MONGO_PATH=mongodb://mongo/inovarg 
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - data-volume:/data/db
+    ports:
+      - "27017:27017"
+
+volumes:
+  data-volume:
+
