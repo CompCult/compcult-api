@@ -1,5 +1,4 @@
 var express = require('express');
-var path = require('path');
 
 var app = express();
 
@@ -7,11 +6,8 @@ require('./startup/logger')(app);
 require('./startup/cors')(app);
 require('./startup/parser')(app);
 require('./startup/db')();
-app.use(express.static(path.join(__dirname, '../client')));
 
-app.get('/', function (req, res) {
-  res.send('This API is running, baby!');
-});
+app.get('/', (req, res) => res.send('This API is running, baby!'));
 
 var general = require('./routes/general.js');
 var users = require('./routes/user.js');
@@ -49,15 +45,6 @@ app.use('/appointment_requests', appointment_request);
 app.use('/places', places);
 app.use('/analytics', analytics);
 
-app.use(function (req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-app.use((err, req, res) => {
-  const status = err.status || 500;
-  res.status(status).send({ 'message': err.message });
-});
+require('./startup/errors')(app);
 
 module.exports = app;
