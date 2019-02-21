@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-var Mission = require('../models/mission.js');
-var MissionAnswer = require('../models/mission_answer.js');
+var Mission = require('./mission.model');
+var MissionAnswer = require('../missionAnswer/missionAnswer.model.js');
 
 // Index
 router.get('/', function (req, res) {
