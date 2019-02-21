@@ -1,33 +1,21 @@
-// dependencies
 var express = require('express');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var expressSession = require('express-session');
 var mongoose = require('mongoose');
-var hash = require('bcrypt-nodejs');
 var path = require('path');
 var cors = require('cors');
-var aws = require('aws-sdk');
 const config = require('config');
 
-// mongoose local
-// mongoose.connect('mongodb://localhost/mean-auth');
-// mongoose
 mongoose.Promise = global.Promise;
 mongoose.connect(config.get('db'))
   .then(() => console.log(`Connected to ${config.get('db')}`));
 
-// Get the default connection
 var db = mongoose.connection;
 
-// Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-// create instance of express
 var app = express();
 
-// define middleware
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -37,12 +25,10 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cors());
 
-// -------------------------------------------------------------------------
 app.get('/', function (req, res) {
   res.send('This API is running, baby!');
 });
 
-// require routes
 var general = require('./routes/general.js');
 var users = require('./routes/user.js');
 var missions = require('./routes/mission.js');
@@ -61,7 +47,6 @@ var appointment_request = require('./routes/appointment_request.js');
 var places = require('./routes/place.js');
 var analytics = require('./routes/analytics');
 
-// routes
 app.use('/general', general);
 app.use('/users', users);
 app.use('/missions', missions);
@@ -79,16 +64,14 @@ app.use('/appointment', appointment);
 app.use('/appointment_requests', appointment_request);
 app.use('/places', places);
 app.use('/analytics', analytics);
-// -------------------------------------------------------------------------
 
-// error hndlers
 app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   const status = err.status || 500;
   res.status(status).send({ 'message': err.message });
 });
