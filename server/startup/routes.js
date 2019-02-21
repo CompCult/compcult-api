@@ -10,7 +10,7 @@ const post = require('../routes/post.js');
 const reaction = require('../routes/reaction.js');
 const appointment = require('../components/appointment/appointment.router.js');
 const appointmentRequest = require('../components/appointmentRequest/appointmentRequest.router.js');
-const places = require('../routes/place.js');
+const places = require('../components/place/place.router');
 const analytics = require('../routes/analytics');
 
 module.exports = app => {

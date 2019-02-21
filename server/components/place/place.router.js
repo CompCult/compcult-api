@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var Place = require('../models/place.js');
+var Place = require('./place.model');
 
 // Index
 router.get('/', function (req, res) {
