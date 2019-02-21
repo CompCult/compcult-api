@@ -8,8 +8,8 @@ const groups = require('../components/group/group.router');
 const groupMember = require('../components/groupMember/groupMember.router');
 const post = require('../routes/post.js');
 const reaction = require('../routes/reaction.js');
-const appointment = require('../routes/appointment.js');
-const appointmentRequest = require('../routes/appointmentRequest.js');
+const appointment = require('../components/appointment/appointment.router.js');
+const appointmentRequest = require('../components/appointmentRequest/appointmentRequest.router.js');
 const places = require('../routes/place.js');
 const analytics = require('../routes/analytics');
 

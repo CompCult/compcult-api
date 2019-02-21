@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-var Appointment = require('../models/appointment.js');
-var AppointmentRequest = require('../models/appointment_request.js');
+var Appointment = require('./appointment.model');
+var AppointmentRequest = require('../appointmentRequest/appointmentRequest.model');
 
 // Index
 router.get('/', function (req, res) {
