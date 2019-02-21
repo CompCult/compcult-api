@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var bcrypt = require('bcryptjs');
 
-var Reaction = require('../models/reaction.js');
+var Reaction = require('./reaction.model');
 
 // Index
 router.get('/', function (req, res) {
