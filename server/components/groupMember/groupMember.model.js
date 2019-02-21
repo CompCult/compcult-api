@@ -6,7 +6,7 @@ var GroupMember = new Schema({
   _id: Number,
   _user: {
     type: Number,
-    ref: './user.js'
+    ref: 'User'
   },
   _group: {
     type: Number,

@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
-var User = require('../models/user.js');
-var Group = require('../models/group.js');
-var Mission = require('../models/mission.js');
-var MissionAnswer = require('../models/mission_answer.js');
-var Uploads = require('../upload.js');
+var User = require('../user/user.model.js');
+var Group = require('../group/group.model');
+var Mission = require('../mission/mission.model.js');
+var MissionAnswer = require('./missionAnswer.model.js');
+var Uploads = require('../../upload.js');
 
 // Index
 router.get('/', function (req, res) {

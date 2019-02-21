@@ -2,19 +2,21 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var autoInc = require('mongoose-sequence')(mongoose);
 
-var Reaction = new Schema({
+var Post = new Schema({
   _id: Number,
   _user: {
     type: Number,
-    ref: './user.js'
+    ref: 'User'
   },
-  _post_reacted: {
-    type: Number,
-    ref: './post.js'
-  },
+  picture: String,
+  audio: String,
+  video: String,
+  text_msg: String,
+  location_lat: String,
+  location_lng: String,
   points: {
     type: Number,
-    default: 1
+    default: 0
   },
   created_at: {
     type: Date,
@@ -22,5 +24,5 @@ var Reaction = new Schema({
   }
 });
 
-Reaction.plugin(autoInc, { id: 'reaction_id' });
-module.exports = mongoose.model('reaction', Reaction);
+Post.plugin(autoInc, { id: 'post_id' });
+module.exports = mongoose.model('post', Post);

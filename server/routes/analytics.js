@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-var Quiz = require('../models/quiz.js');
-var QuizAnswer = require('../models/quiz_answer.js');
+var Quiz = require('../components/quiz/quiz.model.js');
+var QuizAnswer = require('../components/quizAnswer/quizAnswer.model.js');
 const tryCatch = require('../middlewares/awaitHandler');
 
 router.get('/quiz/:quizId', tryCatch(async (req, res) => {

@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var Post = require('../models/post.js');
-var User = require('../models/user.js');
-var Uploads = require('../upload.js');
+var Post = require('./post.model');
+var User = require('../user/user.model');
+var Uploads = require('../../upload.js');
 
 // Index
 router.get('/', function (req, res) {

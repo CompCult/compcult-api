@@ -7,7 +7,7 @@ var Mission = new Schema({
   name: String,
   _user: {
     type: Number,
-    ref: './user.js'
+    ref: 'User'
   },
   description: String,
   points: Number,

@@ -1,4 +1,3 @@
-// user model
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate');
 const autoInc = require('mongoose-sequence')(mongoose);
@@ -59,7 +58,7 @@ const userSchema = new mongoose.Schema({
 userSchema.plugin(autoInc, { id: 'user_id' });
 userSchema.plugin(mongoosePaginate);
 
-const User = mongoose.model('users', userSchema);
+const User = mongoose.model('User', userSchema);
 
 function validateUser (user) {
   const schema = {

@@ -1,10 +1,10 @@
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 
-const { User, validateUser } = require('../models/user.js');
-const Uploads = require('../upload.js');
-const Mailer = require('../mailer.js');
-const utils = require('../utils.js');
+const { User, validateUser } = require('./user.model');
+const Uploads = require('../../upload');
+const Mailer = require('../../mailer');
+const utils = require('../../utils');
 
 async function listUsers (req, res) {
   const query = _.omit(req.query, ['page', 'limit']);

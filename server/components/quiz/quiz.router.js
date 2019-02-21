@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-var Quiz = require('../models/quiz.js');
-var QuizAnswer = require('../models/quiz_answer.js');
+var Quiz = require('./quiz.model');
+var QuizAnswer = require('../quizAnswer/quizAnswer.model');
 
 // Index
 router.get('/', function (req, res) {
