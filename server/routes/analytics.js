@@ -2,9 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 var QuizAnswer = require('../components/quizAnswer/quizAnswer.model.js');
-const tryCatch = require('../middlewares/awaitHandler');
 
-router.get('/quiz/:quizId', tryCatch(async (req, res) => {
+router.get('/quiz/:quizId', async (req, res) => {
   const alternativesAmount = await QuizAnswer
     .aggregate([
       { $match: { _quiz: Number(req.params.quizId) } },
@@ -15,9 +14,9 @@ router.get('/quiz/:quizId', tryCatch(async (req, res) => {
     const alt = alternativesAmount.find(alt => alt._id === alternative);
     if (alt) return alt.amount;
     else return 0;
-  });
+});
 
   res.send([{ data }]);
-}));
+});
 
 module.exports = router;
