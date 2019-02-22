@@ -1,139 +1,22 @@
 var express = require('express');
 var router = express.Router();
 
-var User = require('../user/user.model.js');
-var Group = require('./group.model.js');
-var Mailer = require('../../mailer.js');
-var GroupMember = require('../groupMember/groupMember.model.js');
+const groupCtrl = require('./group.controller');
 
-// Index
-router.get('/', function (req, res) {
-  Group.find({}, function (err, groups) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).json(groups);
-    }
-  });
-});
+router.get('/', groupCtrl.listGroups);
 
-// Find by params
-router.get('/query/fields', function (req, res) {
-  Group.find(req.query, function (err, Group) {
-    if (err) {
-      res.status(400).send(err);
-    } else if (!Group) {
-      res.status(404).send('Grupo não encontrado');
-    } else {
-      res.status(200).json(Group);
-    }
-  });
-});
+router.get('/query/fields', groupCtrl.findGroupByParams);
 
-// Send mail to group
-router.post('/email', async function (req, res) {
-  let groupId = req.body._group;
-  let author = req.body.author;
-  let message = req.body.message;
+router.post('/email', groupCtrl.sendEmailToGroup);
 
-  try {
-    const members = await GroupMember.find({ _group: groupId }).exec();
-    const promises = members.map(getMemberEmail);
+router.post('/', groupCtrl.createGroup);
 
-    Promise.all(promises).then(function (results) {
-      Mailer.sendMail(results, 'Grupos - Mensagem de ' + author, message);
+router.post('/update/:group_id', groupCtrl.updateGroup);
 
-      res.status(200).json('Enviando mensagens...');
-    });
-  } catch (err) {
-    res.status(400).send(err);
-  }
-});
+router.put('/:group_id', groupCtrl.updateGroup);
 
-var getMemberEmail = async function (member) {
-  let userObj = await User.findById(member._user).exec();
-  return userObj.email;
-};
+router.post('/remove/:group_id', groupCtrl.deleteGroup);
 
-// Create
-router.post('/', function (req, res) {
-  var group = new Group();
-  group.name = req.body.name;
-  group.description = req.body.description;
-
-  group.save(function (err) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).send(group);
-    }
-  });
-});
-
-// Update with post
-router.post('/update/:group_id', function (req, res) {
-  Group.findById(req.params.group_id, function (err, group) {
-    if (err) throw err;
-
-    if (req.body.name) group.name = req.body.name;
-    if (req.body.description) group.description = req.body.description;
-
-    group.save(function (err) {
-      if (err) {
-        res.status(400).send(err);
-      } else {
-        res.status(200).send(group);
-      }
-    });
-  });
-});
-
-// Update
-router.put('/:group_id', function (req, res) {
-  Group.findById(req.params.group_id, function (err, group) {
-    if (err) throw err;
-
-    if (req.body.name) group.name = req.body.name;
-    if (req.body.description) group.description = req.body.description;
-
-    group.save(function (err) {
-      if (err) {
-        res.status(400).send(err);
-      } else {
-        res.status(200).send(group);
-      }
-    });
-  });
-});
-
-// Delete with post
-router.post('/remove/:group_id', function (req, res) {
-  Group.remove({ _id: req.params.group_id }, function (err) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      removeGroupMembers(req.params.group_id);
-
-      res.status(200).send('Grupo removido.');
-    }
-  });
-});
-
-// Delete
-router.delete('/:group_id', function (req, res) {
-  Group.remove({ _id: req.params.groupId }, function (err) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      removeGroupMembers(req.params.groupId);
-
-      res.status(200).send('Grupo removido.');
-    }
-  });
-});
-
-var removeGroupMembers = function (groupId) {
-  GroupMember.deleteMany({ _group: groupId }).exec();
-};
+router.delete('/:group_id', groupCtrl.deleteGroup);
 
 module.exports = router;
