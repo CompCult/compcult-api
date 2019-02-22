@@ -118,28 +118,27 @@ router.put('/:mission_id', function (req, res) {
     if (err) throw err;
 
     const date = new Date();
+    const timeStamp = date.toLocaleString();
+    let filename;
     if (req.body._user) missionAnswer._user = req.body._user;
     if (req.body._mission) missionAnswer._mission = req.body._mission;
     if (req.body._group) missionAnswer._group = req.body._group;
     if (req.body.image) {
-      var timeStamp = date.toLocaleString();
       Uploads.uploadFile(req.body.image, req.body._user.toString(), timeStamp);
 
-      var filename = req.body._user.toString() + timeStamp + '.jpg';
+      filename = req.body._user.toString() + timeStamp + '.jpg';
       missionAnswer.image = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
     };
     if (req.body.audio) {
-      var timeStamp = date.toLocaleString();
       Uploads.uploadAudio(req.body.audio, req.body._user.toString(), timeStamp);
 
-      var filename = req.body._user.toString() + timeStamp + '.wav';
+      filename = req.body._user.toString() + timeStamp + '.wav';
       missionAnswer.audio = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
     };
     if (req.body.video) {
-      var timeStamp = date.toLocaleString();
       Uploads.uploadVideo(req.body.video, req.body._user.toString(), timeStamp);
 
-      var filename = req.body._user.toString() + timeStamp + '.mp4';
+      filename = req.body._user.toString() + timeStamp + '.mp4';
       missionAnswer.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
     };
     if (req.body.text_msg) missionAnswer.text_msg = req.body.text_msg;
@@ -147,8 +146,10 @@ router.put('/:mission_id', function (req, res) {
     if (req.body.location_lng) missionAnswer.location_lng = req.body.location_lng;
     if (req.body.status) {
       missionAnswer.status = req.body.status;
-      if (req.body.status == 'Aprovado') {
+      if (req.body.status === 'Aprovado') {
         Mission.findById(missionAnswer._mission, function (err, mission) {
+          if (err) throw err;
+
           if (mission) {
             recompenseUser(missionAnswer._user, mission.points);
           }
@@ -166,11 +167,15 @@ router.put('/:mission_id', function (req, res) {
   });
 });
 
-var recompenseUser = function (user_id, points) {
-  User.findById(user_id, function (err, user) {
+var recompenseUser = function (userId, points) {
+  User.findById(userId, function (err, user) {
+    if (err) throw err;
+
     if (user) {
       user.points += points;
       user.save(function (err) {
+        if (err) throw err;
+
         console.log('Usuário recompensado');
       });
     }
@@ -188,8 +193,8 @@ router.delete('/:mission_id', function (req, res) {
 });
 
 router.get('/missions', function (req, res) {
-  var mission_name = req.query.missionname;
-  MissionAnswer.find({ mail: mission_name }, function (err, mission) {
+  var missionName = req.query.missionname;
+  MissionAnswer.find({ mail: missionName }, function (err, mission) {
     if (err != null) {
       console.log(err);
     }
