@@ -3,7 +3,7 @@ var router = express.Router();
 
 // Current Date
 router.get('/current_date', function (req, res) {
-  date = new Date();
+  const date = new Date();
   return res.status(200).send(date.toLocaleString());
 });
 

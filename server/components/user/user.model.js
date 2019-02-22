@@ -11,8 +11,8 @@ const userSchema = new mongoose.Schema({
   },
   picture: String,
   email: {
-  	type: String,
-  	lowercase: true,
+    type: String,
+    lowercase: true,
     unique: true,
     required: true
   },
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
   state: String,
   zipcode: String,
   points: {
-  	type: Number,
+    type: Number,
     default: 0
   },
   sec_points: {
