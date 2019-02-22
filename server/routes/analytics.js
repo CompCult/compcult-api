@@ -14,7 +14,7 @@ router.get('/quiz/:quizId', async (req, res) => {
     const alt = alternativesAmount.find(alt => alt._id === alternative);
     if (alt) return alt.amount;
     else return 0;
-});
+  });
 
   res.send([{ data }]);
 });
