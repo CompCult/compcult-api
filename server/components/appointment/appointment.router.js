@@ -12,7 +12,7 @@ router.get('/', function (req, res) {
     } else {
       let date = new Date();
 
-      results = appointments.filter(function (appointment) {
+      const results = appointments.filter(function (appointment) {
         let end = new Date(appointment.end_date);
         end.setHours(23, 59, 0);
         return (end >= date);
@@ -56,12 +56,12 @@ router.post('/', function (req, res) {
   appointment.place = req.body.place;
   appointment.type = req.body.type;
 
-  let start_time = new Date(req.body.start_date);
-  let end_time = new Date(req.body.end_date);
-  start_time.setHours(23, 59, 0);
-  end_time.setHours(23, 59, 0);
-  appointment.start_date = start_time;
-  appointment.end_date = end_time;
+  let startTime = new Date(req.body.start_date);
+  let endTime = new Date(req.body.end_date);
+  startTime.setHours(23, 59, 0);
+  endTime.setHours(23, 59, 0);
+  appointment.start_date = startTime;
+  appointment.end_date = endTime;
 
   appointment.save(function (err) {
     if (err) {
@@ -75,19 +75,21 @@ router.post('/', function (req, res) {
 // Update
 router.put('/:appointment_id', function (req, res) {
   Appointment.findById(req.params.appointment_id, function (err, appointment) {
+    if (err) throw err;
+
     if (req.body.name) appointment.name = req.body.name;
     if (req.body.description) appointment.description = req.body.description;
     if (req.body.place) appointment.place = req.body.place;
     if (req.body.type) appointment.type = req.body.type;
     if (req.body.start_date) {
-      start_date = new Date(req.body.start_date);
-      start_date.setHours(23, 59, 0);
-      appointment.start_date = start_date;
+      const startDate = new Date(req.body.start_date);
+      startDate.setHours(23, 59, 0);
+      appointment.start_date = startDate;
     }
     if (req.body.end_date) {
-      end_date = new Date(req.body.end_date);
-      end_date.setHours(23, 59, 0);
-      appointment.end_date = end_date;
+      const endDate = new Date(req.body.end_date);
+      endDate.setHours(23, 59, 0);
+      appointment.end_date = endDate;
     }
 
     appointment.save(function (err) {

@@ -15,7 +15,7 @@ router.get('/', function (req, res) {
       let promises;
 
       try {
-        promises = posts.map(get_author_info);
+        promises = posts.map(getAuthorInfo);
       } catch (err) {
         res.status(400).send(err);
       }
@@ -26,36 +26,34 @@ router.get('/', function (req, res) {
     });
 });
 
-var get_author_info = async function (post) {
+var getAuthorInfo = async function (post) {
   let string = JSON.stringify(post);
-  let post_complete = JSON.parse(string);
-  let user_obj = await User.findById(post._user).exec();
+  let postComplete = JSON.parse(string);
+  let userObj = await User.findById(post._user).exec();
 
-  post_complete.author_name = user_obj.name;
-  post_complete.author_photo = user_obj.picture;
+  postComplete.author_name = userObj.name;
+  postComplete.author_photo = userObj.picture;
 
-  return post_complete;
+  return postComplete;
 };
 
 // Find by params
 router.get('/query/fields', function (req, res) {
-  Post.find(req.query, function (err, post) {
+  Post.find(req.query, function (err, posts) {
     if (err) {
       res.status(400).send(err);
-    } else if (!post) {
+    } else if (!posts) {
       res.status(404).send('Post não encontrado');
     } else {
-      let promises;
-
       try {
-        promises = posts.map(get_author_info);
+        const promises = posts.map(getAuthorInfo);
+
+        Promise.all(promises).then(function (results) {
+          res.status(200).json(results);
+        });
       } catch (err) {
         res.status(400).send(err);
       }
-
-      Promise.all(promises).then(function (results) {
-        res.status(200).json(results);
-      });
     }
   });
 });
@@ -64,31 +62,28 @@ router.get('/query/fields', function (req, res) {
 router.post('/', function (req, res) {
   var post = new Post();
   post._user = req.body._user;
+  var date = new Date();
+  var timeStamp = date.toLocaleString();
+  let filename;
   if (req.body.text_msg) post.text_msg = req.body.text_msg;
   if (req.body.location_lat) post.location_lat = req.body.location_lat;
   if (req.body.location_lng) post.location_lng = req.body.location_lng;
   if (req.body.picture) {
-    var date = new Date();
-    var timeStamp = date.toLocaleString();
     Uploads.uploadFile(req.body.picture, req.body._user.toString(), timeStamp);
 
-    var filename = req.body._user.toString() + timeStamp + '.jpg';
+    filename = req.body._user.toString() + timeStamp + '.jpg';
     post.picture = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   }
   if (req.body.audio) {
-    var date = new Date();
-    var timeStamp = date.toLocaleString();
     Uploads.uploadAudio(req.body.audio, req.body._user.toString(), timeStamp);
 
-    var filename = req.body._user.toString() + 'audio' + timeStamp + '.wav';
+    filename = req.body._user.toString() + 'audio' + timeStamp + '.wav';
     post.audio = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   }
   if (req.body.video) {
-    var date = new Date();
-    var timeStamp = date.toLocaleString();
     Uploads.uploadVideo(req.body.video, req.body._user.toString(), timeStamp);
 
-    var filename = req.body._user.toString() + timeStamp + '.wav';
+    filename = req.body._user.toString() + timeStamp + '.wav';
     post.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   }
 
@@ -107,29 +102,26 @@ router.post('/update/:post_id', function (req, res) {
     if (!post || err) {
       res.status(400).send('Post não encontrado!');
     } else {
+      var date = new Date();
+      var timeStamp = date.toLocaleString();
+      let filename;
       if (req.body.text_msg) post.text_msg = req.body.text_msg;
       if (req.body.picture) {
-        var date = new Date();
-        var timeStamp = date.toLocaleString();
         Uploads.uploadFile(req.body.picture, req.body._user.toString(), timeStamp);
 
-        var filename = req.body._user.toString() + timeStamp + '.jpg';
+        filename = req.body._user.toString() + timeStamp + '.jpg';
         post.picture = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
       }
       if (req.body.audio) {
-        var date = new Date();
-        var timeStamp = date.toLocaleString();
         Uploads.uploadAudio(req.body.audio, req.body._user.toString(), timeStamp);
 
-        var filename = req.body._user.toString() + timeStamp + '.wav';
+        filename = req.body._user.toString() + timeStamp + '.wav';
         post.audio = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
       }
       if (req.body.video) {
-        var date = new Date();
-        var timeStamp = date.toLocaleString();
         Uploads.uploadVideo(req.body.video, req.body._user.toString(), timeStamp);
 
-        var filename = req.body._user.toString() + timeStamp + '.wav';
+        filename = req.body._user.toString() + timeStamp + '.wav';
         post.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
       }
       if (req.body.location_lat) post.location_lat = req.body.location_lat;

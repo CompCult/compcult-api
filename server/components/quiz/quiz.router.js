@@ -26,17 +26,17 @@ router.get('/public', function (req, res) {
 
       for (var i = 0; i < quizzes.length; i++) {
         let quiz = quizzes[i];
-        let end_time = new Date(quiz.end_time);
-        end_time.setHours(23, 59, 0);
-        let in_time = end_time.getTime() >= date.getTime();
+        let endTime = new Date(quiz.end_time);
+        endTime.setHours(23, 59, 0);
+        let inTime = endTime.getTime() >= date.getTime();
 
         if (quiz.single_answer) {
           await wasQuizAnswered(quiz._id, req.query.user_id).then((answered) => {
-            if (!answered && in_time) {
+            if (!answered && inTime) {
               result.push(quiz);
             }
           });
-        } else if (!quiz.single_answer && in_time) {
+        } else if (!quiz.single_answer && inTime) {
           result.push(quiz);
         }
       }
@@ -54,8 +54,8 @@ router.get('/private', function (req, res) {
     } else if (!quiz) {
       res.status(404).send('Quiz não encontrado');
     } else {
-      let end_time = new Date(quiz.end_time);
-      end_time.setHours(23, 59, 0);
+      let endTime = new Date(quiz.end_time);
+      endTime.setHours(23, 59, 0);
       let date = new Date();
       let answered;
 
@@ -65,7 +65,7 @@ router.get('/private', function (req, res) {
         res.status(400).send(err);
       }
 
-      if (end_time < date) {
+      if (endTime < date) {
         res.status(401).send('Quiz expirado');
       } else if (quiz.single_answer && answered) {
         res.status(401).send('Quiz já foi respondido');
@@ -77,7 +77,7 @@ router.get('/private', function (req, res) {
 });
 
 var wasQuizAnswered = async function (quiz, user) {
-  answers = await QuizAnswer.find({ _quiz: quiz, _user: user }).exec();
+  const answers = await QuizAnswer.find({ _quiz: quiz, _user: user }).exec();
   return answers.length > 0;
 };
 
@@ -108,12 +108,12 @@ router.post('/', function (req, res) {
   quiz.alternative_b = req.body.alternative_b;
   quiz.correct_answer = req.body.correct_answer;
 
-  let start_time = new Date(req.body.start_time);
-  let end_time = new Date(req.body.end_time);
-  start_time.setHours(23, 59, 0);
-  end_time.setHours(23, 59, 0);
-  quiz.start_time = start_time;
-  quiz.end_time = end_time;
+  let startTime = new Date(req.body.start_time);
+  let endTime = new Date(req.body.end_time);
+  startTime.setHours(23, 59, 0);
+  endTime.setHours(23, 59, 0);
+  quiz.start_time = startTime;
+  quiz.end_time = endTime;
 
   if (req.body.alternative_c) quiz.alternative_c = req.body.alternative_c;
   if (req.body.alternative_d) quiz.alternative_d = req.body.alternative_d;
@@ -131,6 +131,8 @@ router.post('/', function (req, res) {
 // Update
 router.put('/:quiz_id', function (req, res) {
   Quiz.findById(req.params.quiz_id, function (err, quiz) {
+    if (err) throw err;
+
     if (req.body.title) quiz.title = req.body.title;
     if (req.body.description) quiz.description = req.body.description;
     if (req.body.points) quiz.points = req.body.points;
@@ -140,14 +142,14 @@ router.put('/:quiz_id', function (req, res) {
     if (req.body.alternative_b) quiz.alternative_b = req.body.alternative_b;
     if (req.body.correct_answer) quiz.correct_answer = req.body.correct_answer;
     if (req.body.start_time) {
-      start_time = new Date(req.body.start_time);
-      start_time.setHours(23, 59, 0);
-      quiz.start_time = start_time;
+      const startTime = new Date(req.body.start_time);
+      startTime.setHours(23, 59, 0);
+      quiz.start_time = startTime;
     }
     if (req.body.end_time) {
-      end_time = new Date(req.body.end_time);
-      end_time.setHours(23, 59, 0);
-      quiz.end_time = end_time;
+      const endTime = new Date(req.body.end_time);
+      endTime.setHours(23, 59, 0);
+      quiz.end_time = endTime;
     }
     if (req.body.alternative_c) quiz.alternative_c = req.body.alternative_c;
     if (req.body.alternative_d) quiz.alternative_d = req.body.alternative_d;
@@ -185,7 +187,7 @@ router.get('/:quiz_id', function (req, res) {
   });
 });
 
-generateSecretCode = function () {
+function generateSecretCode () {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 

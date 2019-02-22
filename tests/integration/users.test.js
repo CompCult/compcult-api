@@ -1,6 +1,5 @@
 const request = require('supertest');
 const { User } = require('../../server/components/user/user.model');
-const bcrypt  = require('bcryptjs');
 
 describe('/users', () => {
   let server;

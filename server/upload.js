@@ -1,5 +1,4 @@
 var AWS = require('aws-sdk');
-var fs = require('fs');
 
 var s3 = new AWS.S3({
   accessKeyId: process.env.S3_KEY,
@@ -9,7 +8,7 @@ var s3 = new AWS.S3({
 
 class Uploads {
   static async uploadFile (file, _user, stamp) {
-    var buffer = new Buffer(file, 'base64');
+    var buffer = Buffer.from(file, 'base64');
     var filename = process.env.S3_FOLDER + _user + stamp + '.jpg';
 
     var params = {
@@ -21,12 +20,11 @@ class Uploads {
       ContentType: 'image/jpeg'
     };
 
-    let putObjectPromise = await s3.upload(params).promise();
-    let location = putObjectPromise.Location;
+    await s3.upload(params).promise();
   }
 
   static async uploadAudio (file, _user, stamp) {
-    var buffer = new Buffer(file, 'base64');
+    var buffer = Buffer.from(file, 'base64');
     var filename = process.env.S3_FOLDER + _user + stamp + '.wav';
 
     var params = {
@@ -45,7 +43,7 @@ class Uploads {
   }
 
   static async uploadVideo (file, _user, stamp) {
-    var buffer = new Buffer(file, 'base64');
+    var buffer = Buffer.from(file, 'base64');
     var filename = process.env.S3_FOLDER + _user + stamp + '.mp4';
 
     var params = {

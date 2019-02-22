@@ -14,7 +14,7 @@ router.get('/', function (req, res) {
       let promises;
 
       try {
-        promises = answers.map(inject_data);
+        promises = answers.map(injectData);
       } catch (err) {
         res.status(400).send(err);
       }
@@ -34,24 +34,24 @@ router.get('/:answer_id', function (req, res) {
     } else if (!answer) {
       res.status(404).send('Resposta não encontrada');
     } else {
-      let answer_complete = inject_data(answer);
+      let answerComplete = injectData(answer);
 
-      res.status(200).send(answer_complete);
+      res.status(200).send(answerComplete);
     }
   });
 });
 
-var inject_data = async function (answer) {
+var injectData = async function (answer) {
   let string = JSON.stringify(answer);
-  let answer_complete = JSON.parse(string);
+  let answerComplete = JSON.parse(string);
 
-  let user_obj = await User.findById(answer._user).exec();
-  let quiz_obj = await Quiz.findById(answer._quiz).exec();
+  let userObj = await User.findById(answer._user).exec();
+  let quizObj = await Quiz.findById(answer._quiz).exec();
 
-  answer_complete._user = user_obj;
-  answer_complete._quiz = quiz_obj;
+  answerComplete._user = userObj;
+  answerComplete._quiz = quizObj;
 
-  return answer_complete;
+  return answerComplete;
 };
 
 // Find by params
@@ -59,61 +59,63 @@ router.get('/query/fields', function (req, res) {
   QuizAnswer.find(req.query, function (err, answers) {
     if (err) {
       res.status(400).send(err);
-    } else if (!answer) {
+    } else if (!answers) {
       res.status(404).send('Resposta do quiz não encontrada');
     } else {
-      let promises;
-
       try {
-        promises = answers.map(inject_data);
+        const promises = answers.map(injectData);
+
+        Promise.all(promises).then(function (results) {
+          res.status(200).json(results);
+        });
       } catch (err) {
         res.status(400).send(err);
       }
-
-      Promise.all(promises).then(function (results) {
-        res.status(200).json(results);
-      });
     }
   });
 });
 
 // Create
 router.post('/', async function (req, res) {
-  var quiz_answer = new QuizAnswer();
-  quiz_answer._user = req.body._user;
-  quiz_answer._quiz = req.body._quiz;
-  quiz_answer.answer = req.body.answer;
-  approved = await verifyAnswer(quiz_answer._quiz, quiz_answer.answer);
+  var quizAnswer = new QuizAnswer();
+  quizAnswer._user = req.body._user;
+  quizAnswer._quiz = req.body._quiz;
+  quizAnswer.answer = req.body.answer;
+  const approved = await verifyAnswer(quizAnswer._quiz, quizAnswer.answer);
 
   if (approved !== undefined) {
-    quiz_answer.approved = approved;
+    quizAnswer.approved = approved;
   }
 
-  quiz_answer.save(function (err) {
+  quizAnswer.save(function (err) {
     if (err) {
       res.status(400).send(err);
     } else {
-      res.status(200).send(quiz_answer);
+      res.status(200).send(quizAnswer);
     }
   });
 });
 
-var verifyAnswer = async function (quiz_id, answer) {
-  let quiz = await Quiz.findById(quiz_id).exec();
+var verifyAnswer = async function (quizId, answer) {
+  let quiz = await Quiz.findById(quizId).exec();
 
-  if (quiz.correct_answer && quiz.correct_answer == answer) {
+  if (quiz.correct_answer && quiz.correct_answer === answer) {
     recompenseUser(answer._user, quiz.points);
     return true;
-  } else if (quiz.correct_answer && quiz.correct_answer != answer.answer) {
+  } else if (quiz.correct_answer && quiz.correct_answer !== answer.answer) {
     return false;
   }
 };
 
-var recompenseUser = function (user_id, points) {
-  User.findById(user_id, function (err, user) {
+var recompenseUser = function (userId, points) {
+  User.findById(userId, function (err, user) {
+    if (err) throw err;
+
     if (user) {
       user.points += points;
       user.save(function (err) {
+        if (err) throw err;
+
         console.log('Usuário recompensado');
       });
     }
@@ -122,35 +124,39 @@ var recompenseUser = function (user_id, points) {
 
 // Update
 router.put('/:answer_id', function (req, res) {
-  QuizAnswer.findById(req.params.answer_id, function (err, quiz_answer) {
-    if (req.body._user) quiz_answer._user = req.body._user;
-    if (req.body._quiz) quiz_answer._quiz = req.body._quiz;
-    if (req.body.answer) quiz_answer.answer = req.body.answer;
+  QuizAnswer.findById(req.params.answer_id, function (err, quizAnswer) {
+    if (err) throw err;
+
+    if (req.body._user) quizAnswer._user = req.body._user;
+    if (req.body._quiz) quizAnswer._quiz = req.body._quiz;
+    if (req.body.answer) quizAnswer.answer = req.body.answer;
     if (req.body.approved !== undefined) {
-      quiz_answer.approved = req.body.approved;
+      quizAnswer.approved = req.body.approved;
 
       if (req.body.approved) {
-        Quiz.findById(quiz_answer._quiz, function (err, q) {
+        Quiz.findById(quizAnswer._quiz, function (err, q) {
+          if (err) throw err;
+
           if (q) {
-            recompenseUser(quiz_answer._user, q.points);
+            recompenseUser(quizAnswer._user, q.points);
           }
         });
       }
     }
 
-    quiz_answer.save(function (err) {
+    quizAnswer.save(function (err) {
       if (err) {
         res.status(400).send(err);
       } else {
-        res.status(200).send(quiz_answer);
+        res.status(200).send(quizAnswer);
       }
     });
   });
 });
 
 // Delete
-router.delete('/:quiz_answer_id', function (req, res) {
-  QuizAnswer.remove({ _id: req.params.quiz_answer_id }, function (err) {
+router.delete('/:quizAnswer_id', function (req, res) {
+  QuizAnswer.remove({ _id: req.params.quizAnswer_id }, function (err) {
     if (err) {
       res.status(400).send(err);
     } else {

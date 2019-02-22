@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var bcrypt = require('bcryptjs');
 
 var Reaction = require('./reaction.model');
 
@@ -31,6 +30,8 @@ router.get('/query/fields', function (req, res) {
 // Like
 router.post('/', function (req, res) {
   Reaction.findOne({ _user: req.body._user, _post_reacted: req.body._post_reacted }, function (err, reaction) {
+    if (err) throw err;
+
     if (reaction) {
       console.log('update');
       reaction.points += req.body.points;

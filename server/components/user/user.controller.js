@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 
-const { User, validateUser } = require('./user.model');
+const { User } = require('./user.model');
 const Uploads = require('../../upload');
 const Mailer = require('../../mailer');
 const utils = require('../../utils');
@@ -80,8 +80,7 @@ function updatePassword (req, res) {
 }
 
 function recoveryPassword (req, res) {
-  let user_email = req.body.email;
-  let new_password = req.body.new_password;
+  let userEmail = req.body.email;
   let html = "<div style='width:90%; margin-left:auto; margin-right:auto; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px;'>" +
             "<div style='font-family: Arial; border-color: #502274;'>" +
             "<div style='vertical-align:middle; text-align:justify;'>" +
@@ -94,7 +93,7 @@ function recoveryPassword (req, res) {
                 "<p style='text-align:left;' ><b>Equipe Minha Árvore!</b></p>" +
                 '</div></div></div>';
 
-  User.findOne({ email: user_email }, function (err, user) {
+  User.findOne({ email: userEmail }, function (err, user) {
     if (err) {
       res.status(400).send(err);
     } if (!user) {
@@ -109,7 +108,7 @@ function recoveryPassword (req, res) {
             if (err) {
               return res.status(400).send(err);
             } else {
-              Mailer.sendMail(user_email, 'Recuperação de senha', html);
+              Mailer.sendMail(userEmail, 'Recuperação de senha', html);
               res.status(200).send(user);
             }
           });
@@ -121,6 +120,8 @@ function recoveryPassword (req, res) {
 
 function updateUser (req, res) {
   User.findById(req.params.user_id, function (err, user) {
+    if (err) throw err;
+
     if (!user) {
       res.status(400).send('Usuário não encontrado!');
     }
@@ -158,6 +159,8 @@ function updateUser (req, res) {
 
     if (req.body.password) {
       bcrypt.hash(req.body.password, 10, function (err, hash) {
+        if (err) throw err;
+
         user.password = hash;
         user.save(function (err) {
           if (err) {
@@ -180,7 +183,9 @@ function updateUser (req, res) {
 }
 
 function authenticate (req, res) {
-  User.findOne({ 'email': req.body.email }, function (error, user) {
+  User.findOne({ 'email': req.body.email }, function (err, user) {
+    if (err) throw err;
+
     if (!user) {
       res.status(404).send('Usuário não encontrado.');
     } else if (_userIsBanned(user.banned_until)) {
@@ -213,7 +218,7 @@ function deleteUser (req, res) {
 
 function _userIsBanned (date) {
   if (date) {
-    now = new Date();
+    const now = new Date();
     if (date.getTime() > now.getTime()) {
       return true;
     }

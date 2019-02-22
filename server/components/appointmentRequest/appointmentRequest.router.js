@@ -14,7 +14,7 @@ router.get('/', function (req, res) {
       let promises;
 
       try {
-        promises = requests.map(inject_appointment);
+        promises = requests.map(injectAppointment);
       } catch (err) {
         res.status(400).send(err);
       }
@@ -26,17 +26,17 @@ router.get('/', function (req, res) {
   });
 });
 
-var inject_appointment = async function (request) {
+var injectAppointment = async function (request) {
   let string = JSON.stringify(request);
-  let request_complete = JSON.parse(string);
+  let requestComplete = JSON.parse(string);
 
-  let user_obj = await User.findById(request._user).exec();
-  let appointment_obj = await Appointment.findById(request._appointment).exec();
+  let userObj = await User.findById(request._user).exec();
+  let appointmentObj = await Appointment.findById(request._appointment).exec();
 
-  request_complete._user = user_obj;
-  request_complete._appointment = appointment_obj;
+  requestComplete._user = userObj;
+  requestComplete._appointment = appointmentObj;
 
-  return request_complete;
+  return requestComplete;
 };
 
 // Show
@@ -61,7 +61,7 @@ router.get('/query/fields', function (req, res) {
       let promises;
 
       try {
-        promises = event.map(inject_appointment);
+        promises = event.map(injectAppointment);
       } catch (err) {
         res.status(400).send(err);
       }
@@ -94,6 +94,8 @@ router.post('/', function (req, res) {
 // Update
 router.put('/:request_id', function (req, res) {
   AppointmentRequest.findById(req.params.request_id, function (err, request) {
+    if (err) throw err;
+
     if (req.body._appointment) request._appointment = req.body._appointment;
     if (req.body.status) {
       request.status = req.body.status;

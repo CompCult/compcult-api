@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-var Quiz = require('../components/quiz/quiz.model.js');
 var QuizAnswer = require('../components/quizAnswer/quizAnswer.model.js');
 const tryCatch = require('../middlewares/awaitHandler');
 

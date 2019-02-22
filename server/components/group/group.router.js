@@ -32,27 +32,27 @@ router.get('/query/fields', function (req, res) {
 
 // Send mail to group
 router.post('/email', async function (req, res) {
-  let group_id = req.body._group;
+  let groupId = req.body._group;
   let author = req.body.author;
   let message = req.body.message;
 
   try {
-    members = await GroupMember.find({ _group: group_id }).exec();
-    promises = members.map(getMemberEmail);
+    const members = await GroupMember.find({ _group: groupId }).exec();
+    const promises = members.map(getMemberEmail);
+
+    Promise.all(promises).then(function (results) {
+      Mailer.sendMail(results, 'Grupos - Mensagem de ' + author, message);
+
+      res.status(200).json('Enviando mensagens...');
+    });
   } catch (err) {
     res.status(400).send(err);
   }
-
-  Promise.all(promises).then(function (results) {
-    Mailer.sendMail(results, 'Grupos - Mensagem de ' + author, message);
-
-    res.status(200).json('Enviando mensagens...');
-  });
 });
 
 var getMemberEmail = async function (member) {
-  let user_obj = await User.findById(member._user).exec();
-  return user_obj.email;
+  let userObj = await User.findById(member._user).exec();
+  return userObj.email;
 };
 
 // Create
@@ -73,6 +73,8 @@ router.post('/', function (req, res) {
 // Update with post
 router.post('/update/:group_id', function (req, res) {
   Group.findById(req.params.group_id, function (err, group) {
+    if (err) throw err;
+
     if (req.body.name) group.name = req.body.name;
     if (req.body.description) group.description = req.body.description;
 
@@ -89,6 +91,8 @@ router.post('/update/:group_id', function (req, res) {
 // Update
 router.put('/:group_id', function (req, res) {
   Group.findById(req.params.group_id, function (err, group) {
+    if (err) throw err;
+
     if (req.body.name) group.name = req.body.name;
     if (req.body.description) group.description = req.body.description;
 
@@ -117,19 +121,19 @@ router.post('/remove/:group_id', function (req, res) {
 
 // Delete
 router.delete('/:group_id', function (req, res) {
-  Group.remove({ _id: req.params.group_id }, function (err) {
+  Group.remove({ _id: req.params.groupId }, function (err) {
     if (err) {
       res.status(400).send(err);
     } else {
-      removeGroupMembers(req.params.group_id);
+      removeGroupMembers(req.params.groupId);
 
       res.status(200).send('Grupo removido.');
     }
   });
 });
 
-var removeGroupMembers = function (group_id) {
-  GroupMember.deleteMany({ _group: group_id }).exec();
+var removeGroupMembers = function (groupId) {
+  GroupMember.deleteMany({ _group: groupId }).exec();
 };
 
 module.exports = router;
