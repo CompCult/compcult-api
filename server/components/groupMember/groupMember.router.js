@@ -37,7 +37,7 @@ router.get('/groups', function (req, res) {
     } else if (!members) {
       res.status(404).send('Membro não encontrado');
     } else {
-      promises = members.map(getGroupFromMember);
+      const promises = members.map(getGroupFromMember);
 
       Promise.all(promises).then(function (results) {
         res.status(200).json(results);
@@ -78,6 +78,8 @@ router.post('/', function (req, res) {
 // Update with post
 router.post('/update/:member_id', function (req, res) {
   GroupMember.findById(req.params.member_id, function (err, member) {
+    if (err) throw err;
+
     if (req.body.is_admin !== undefined) member.is_admin = req.body.is_admin;
 
     member.save(function (err) {
@@ -93,6 +95,8 @@ router.post('/update/:member_id', function (req, res) {
 // Update
 router.put('/:member_id', function (req, res) {
   GroupMember.findById(req.params.member_id, function (err, member) {
+    if (err) throw err;
+
     if (req.body.is_admin !== undefined) member.is_admin = req.body.is_admin;
 
     member.save(function (err) {
