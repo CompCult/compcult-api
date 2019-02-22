@@ -1,134 +1,22 @@
 var express = require('express');
 var router = express.Router();
 
-var User = require('../user/user.model');
-var Group = require('../group/group.model');
-var GroupMember = require('./groupMember.model');
+const groupMemberCtrl = require('./group.controller');
 
-// Index
-router.get('/', function (req, res) {
-  GroupMember.find({}, function (err, members) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).json(members);
-    }
-  });
-});
+router.get('/', groupMemberCtrl.listGroupMembers);
 
-// Find by params
-router.get('/query/fields', function (req, res) {
-  GroupMember.find(req.query, function (err, member) {
-    if (err) {
-      res.status(400).send(err);
-    } else if (!member) {
-      res.status(404).send('Membro não encontrado');
-    } else {
-      res.status(200).json(member);
-    }
-  });
-});
+router.get('/query/fields', groupMemberCtrl.findGroupMemberById);
 
-// Find groups from user
-router.get('/groups', function (req, res) {
-  GroupMember.find({ _user: req.query._user }, function (err, members) {
-    if (err) {
-      res.status(400).send(err);
-    } else if (!members) {
-      res.status(404).send('Membro não encontrado');
-    } else {
-      const promises = members.map(getGroupFromMember);
+router.get('/groups', groupMemberCtrl.findGroupsFromUser);
 
-      Promise.all(promises).then(function (results) {
-        res.status(200).json(results);
-      });
-    }
-  });
-});
+router.post('/', groupMemberCtrl.createGroupMember);
 
-var getGroupFromMember = async function (member) {
-  return Group.findById(member._group).exec();
-};
+router.post('/update/:member_id', groupMemberCtrl.updateGroupMember);
 
-// Create
-router.post('/', function (req, res) {
-  var member = new GroupMember();
+router.put('/:member_id', groupMemberCtrl.updateGroupMember);
 
-  User.findOne({ email: req.body.email }, function (err, user) {
-    if (err) {
-      res.status(400).send(err);
-    } else if (!user) {
-      res.status(404).send('Usuário não encontrado');
-    } else {
-      member._user = user._id;
-      member._group = req.body._group;
-      member.is_admin = req.body.is_admin;
+router.post('/remove/:member_id', groupMemberCtrl.deleteGroupMember);
 
-      member.save(function (err) {
-        if (err) {
-          res.status(400).send(err);
-        } else {
-          res.status(200).send(member);
-        }
-      });
-    }
-  });
-});
-
-// Update with post
-router.post('/update/:member_id', function (req, res) {
-  GroupMember.findById(req.params.member_id, function (err, member) {
-    if (err) throw err;
-
-    if (req.body.is_admin !== undefined) member.is_admin = req.body.is_admin;
-
-    member.save(function (err) {
-      if (err) {
-        res.status(400).send(err);
-      } else {
-        res.status(200).send(member);
-      }
-    });
-  });
-});
-
-// Update
-router.put('/:member_id', function (req, res) {
-  GroupMember.findById(req.params.member_id, function (err, member) {
-    if (err) throw err;
-
-    if (req.body.is_admin !== undefined) member.is_admin = req.body.is_admin;
-
-    member.save(function (err) {
-      if (err) {
-        res.status(400).send(err);
-      } else {
-        res.status(200).send(member);
-      }
-    });
-  });
-});
-
-// Delete with post
-router.post('/remove/:member_id', function (req, res) {
-  GroupMember.remove({ _id: req.params.member_id }, function (err) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).send('Membro deletado!');
-    }
-  });
-});
-
-// Delete
-router.delete('/:member_id', function (req, res) {
-  GroupMember.remove({ _id: req.params.member_id }, function (err) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).send('Membro deletado!');
-    }
-  });
-});
+router.delete('/:member_id', groupMemberCtrl.deleteGroupMember);
 
 module.exports = router;
