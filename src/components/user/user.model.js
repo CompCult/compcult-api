@@ -3,6 +3,13 @@ const mongoosePaginate = require('mongoose-paginate');
 const autoInc = require('mongoose-sequence')(mongoose);
 const Joi = require('joi');
 
+const userTypes = {
+  'TEACHER': 'professor',
+  'STUDENT': 'estudante',
+  'MANAGER': 'gestor',
+  'COMMON': 'usuarioComum'
+};
+
 const userSchema = new mongoose.Schema({
   _id: Number,
   name: {
@@ -18,6 +25,7 @@ const userSchema = new mongoose.Schema({
   },
   type: {
     type: String,
+    enum: Object.values(userTypes),
     required: true
   },
   institution: String,
@@ -65,10 +73,11 @@ function validateUser (user) {
     name: Joi.string().required(),
     email: Joi.string().required(),
     password: Joi.string().required(),
-    type: Joi.string().required()
+    type: Joi.string().valid(Object.values(userTypes)).required(),
+    institution: Joi.string()
   };
 
   return Joi.validate(user, schema);
 };
 
-module.exports = { User, validateUser };
+module.exports = { User, validateUser, userTypes };
