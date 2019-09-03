@@ -8,11 +8,13 @@ const quizCtrl = require('./quiz.controller');
 
 router.get('/', quizCtrl.listQuizzes);
 
+router.get('/:quizId', [
+  quizMiddleware.getQuiz
+], quizCtrl.getQuiz);
+
 router.get('/public', quizCtrl.findPublicQuizzes);
 
 router.get('/private', quizCtrl.findPrivateQuiz);
-
-router.get('/query/fields', quizCtrl.findQuizzByParams);
 
 router.post('/', [
   userMiddleware.authorize(userModel.userTypes.TEACHER)
@@ -29,7 +31,5 @@ router.delete('/:quizId', [
   userMiddleware.authorize(userModel.userTypes.TEACHER),
   quizMiddleware.isOwner
 ], quizCtrl.deleteQuiz);
-
-router.get('/:quiz_id', quizCtrl.getQuiz);
 
 module.exports = router;

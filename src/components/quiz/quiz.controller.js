@@ -3,24 +3,13 @@ var QuizAnswer = require('../quizAnswer/quizAnswer.model');
 
 const api = module.exports;
 
-api.listQuizzes = function (req, res) {
-  Quiz.find({}, function (err, quizzes) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).json(quizzes);
-    }
-  });
+api.listQuizzes = async (req, res) => {
+  const quizzes = await Quiz.find(req.query);
+  res.send(quizzes);
 };
 
-api.getQuiz = function (req, res) {
-  Quiz.find({ _id: req.params.quiz_id }, function (err, quiz) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).json(quiz);
-    }
-  });
+api.getQuiz = (req, res) => {
+  res.send(req.quiz);
 };
 
 api.findPublicQuizzes = function (req, res) {
@@ -78,18 +67,6 @@ api.findPrivateQuiz = function (req, res) {
       } else {
         res.status(200).json(quiz);
       }
-    }
-  });
-};
-
-api.findQuizzByParams = function (req, res) {
-  Quiz.find(req.query, function (err, quiz) {
-    if (err) {
-      res.status(400).send(err);
-    } else if (!quiz) {
-      res.status(404).send('Quiz não encontrado');
-    } else {
-      res.status(200).json(quiz);
     }
   });
 };
