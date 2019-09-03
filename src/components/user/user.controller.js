@@ -82,16 +82,16 @@ function updatePassword (req, res) {
 function recoveryPassword (req, res) {
   let userEmail = req.body.email;
   let html = "<div style='width:90%; margin-left:auto; margin-right:auto; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px;'>" +
-            "<div style='font-family: Arial; border-color: #502274;'>" +
-            "<div style='vertical-align:middle; text-align:justify;'>" +
-            "<p style='text-align:left;'>Olá!</p>" +
-            '<p>Você está recebendo esse e-mail que foi requisitada a alteração da sua senha de acesso. Se você não fez nenhuma requisição, pode simplesmente ignorar este e-mail.</p>' +
-              '<p>Para confirmar a alteração da senha, clique no botão abaixo:</p>' +
-                "<form action='" + process.env.PASS_EDIT + req.body.email + "' method='post'>" +
-                "<input type='submit' value='Confirmar alteração de senha' style='margin-top:3px; margin-bottom:3px; background: #502274; margin-bottom: 3px; padding: 10px; text-align: center; color: white; font-weight: bold; border: 1px solid #502274;'></form>" +
-                "<p style='text-align:left;' >Bom uso,</p>" +
-                "<p style='text-align:left;' ><b>Equipe Minha Árvore!</b></p>" +
-                '</div></div></div>';
+    "<div style='font-family: Arial; border-color: #502274;'>" +
+    "<div style='vertical-align:middle; text-align:justify;'>" +
+    "<p style='text-align:left;'>Olá!</p>" +
+    '<p>Você está recebendo esse e-mail que foi requisitada a alteração da sua senha de acesso. Se você não fez nenhuma requisição, pode simplesmente ignorar este e-mail.</p>' +
+    '<p>Para confirmar a alteração da senha, clique no botão abaixo:</p>' +
+    "<form action='" + process.env.PASS_EDIT + req.body.email + "' method='post'>" +
+    "<input type='submit' value='Confirmar alteração de senha' style='margin-top:3px; margin-bottom:3px; background: #502274; margin-bottom: 3px; padding: 10px; text-align: center; color: white; font-weight: bold; border: 1px solid #502274;'></form>" +
+    "<p style='text-align:left;' >Bom uso,</p>" +
+    "<p style='text-align:left;' ><b>Equipe Minha Árvore!</b></p>" +
+    '</div></div></div>';
 
   User.findOne({ email: userEmail }, function (err, user) {
     if (err) {
@@ -182,27 +182,20 @@ function updateUser (req, res) {
   });
 }
 
-function authenticate (req, res) {
-  User.findOne({ 'email': req.body.email }, function (err, user) {
-    if (err) throw err;
+async function authenticate (req, res) {
+  const user = await User.findOne({ 'email': req.body.email });
 
-    if (!user) {
-      res.status(404).send('Usuário não encontrado.');
-    } else if (_userIsBanned(user.banned_until)) {
-      res.status(400).send('Usuário banido até ' + user.banned_until.toLocaleString());
-    } else {
-      bcrypt.compare(req.body.password, user.password, function (err, result) {
-        if (err) {
-          res.status(400).send(err);
-        } else {
-          if (result) {
-            res.status(200).json(user);
-          } else {
-            res.status(401).json('Senha incorreta.');
-          }
-        }
-      });
-    }
+  if (!user) {
+    return res.status(404).send('Usuário não encontrado.');
+  } else if (_userIsBanned(user.banned_until)) {
+    return res.status(400).send('Usuário banido até ' + user.banned_until.toLocaleString());
+  } else if (!user.comparePassword(req.body.password)) {
+    res.status(401).json('Senha incorreta.');
+  }
+
+  res.send({
+    ..._.omit(user.toJSON(), ['password']),
+    token: user.generateToken()
   });
 }
 

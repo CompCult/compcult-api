@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate');
-const autoInc = require('mongoose-sequence')(mongoose);
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const config = require('config');
 const Joi = require('joi');
 
 const userTypes = {
@@ -11,7 +13,6 @@ const userTypes = {
 };
 
 const userSchema = new mongoose.Schema({
-  _id: Number,
   name: {
     type: String,
     required: true
@@ -63,8 +64,18 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-userSchema.plugin(autoInc, { id: 'user_id' });
 userSchema.plugin(mongoosePaginate);
+
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+userSchema.methods.generateToken = function () {
+  const payload = { id: this._id, type: this.type };
+  const token = jwt.sign(payload, config.get('jwtSecret'), { expiresIn: '7 days' });
+
+  return token;
+};
 
 const User = mongoose.model('User', userSchema);
 
