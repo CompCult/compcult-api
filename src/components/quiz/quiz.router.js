@@ -1,5 +1,8 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const userMiddleware = require('../user/user.middlewares');
+const quizMiddleware = require('./quiz.middlewares');
+const userModel = require('../user/user.model');
 
 const quizCtrl = require('./quiz.controller');
 
@@ -11,9 +14,15 @@ router.get('/private', quizCtrl.findPrivateQuiz);
 
 router.get('/query/fields', quizCtrl.findQuizzByParams);
 
-router.post('/', quizCtrl.createQuizz);
+router.post('/', [
+  userMiddleware.authorize(userModel.userTypes.TEACHER)
+], quizCtrl.createQuizz);
 
-router.put('/:quiz_id', quizCtrl.updateQuizz);
+router.put('/:quizId', [
+  quizMiddleware.getQuiz,
+  userMiddleware.authorize(userModel.userTypes.TEACHER),
+  quizMiddleware.isOwner
+], quizCtrl.updateQuizz);
 
 router.delete('/:quiz_id', quizCtrl.deleteQuiz);
 
