@@ -108,7 +108,7 @@ api.createQuizz = async (req, res) => {
   res.send(quiz);
 };
 
-api.updateQuizz = async (req, res) => {
+api.updateQuiz = async (req, res) => {
   const quiz = req.quiz;
 
   quiz.set(req.body);
@@ -128,14 +128,11 @@ api.updateQuizz = async (req, res) => {
   res.send(quiz);
 };
 
-api.deleteQuiz = function (req, res) {
-  Quiz.remove({ _id: req.params.quiz_id }, function (err) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).send('Quiz removido.');
-    }
-  });
+api.deleteQuiz = async (req, res) => {
+  const quiz = req.quiz;
+  await quiz.delete();
+
+  res.send(quiz);
 };
 
 async function wasQuizAnswered (quiz, user) {

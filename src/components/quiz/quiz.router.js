@@ -22,9 +22,13 @@ router.put('/:quizId', [
   quizMiddleware.getQuiz,
   userMiddleware.authorize(userModel.userTypes.TEACHER),
   quizMiddleware.isOwner
-], quizCtrl.updateQuizz);
+], quizCtrl.updateQuiz);
 
-router.delete('/:quiz_id', quizCtrl.deleteQuiz);
+router.delete('/:quizId', [
+  quizMiddleware.getQuiz,
+  userMiddleware.authorize(userModel.userTypes.TEACHER),
+  quizMiddleware.isOwner
+], quizCtrl.deleteQuiz);
 
 router.get('/:quiz_id', quizCtrl.getQuiz);
 
