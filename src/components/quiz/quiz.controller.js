@@ -76,11 +76,6 @@ api.createQuizz = async (req, res) => {
   quiz._user = req.user.id;
   quiz.secret_code = generateSecretCode();
 
-  let startTime = new Date(req.body.start_time);
-  let endTime = new Date(req.body.end_time);
-  startTime.setHours(23, 59, 0);
-  endTime.setHours(23, 59, 0);
-
   await quiz.save();
   res.send(quiz);
 };

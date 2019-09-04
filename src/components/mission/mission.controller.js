@@ -1,9 +1,7 @@
-var Mission = require('./mission.model');
-var MissionAnswer = require('../missionAnswer/missionAnswer.model.js');
+const Mission = require('./mission.model');
+const MissionAnswer = require('../missionAnswer/missionAnswer.model.js');
 
-const api = module.exports;
-
-api.listMissions = (req, res) => {
+exports.listMissions = (req, res) => {
   Mission.find({}, function (err, missions) {
     if (err) {
       res.status(400).send(err);
@@ -13,12 +11,12 @@ api.listMissions = (req, res) => {
   });
 };
 
-api.getMission = async (req, res) => {
+exports.getMission = async (req, res) => {
   const mission = await Mission.findById(req.params.missionId);
   res.send(mission);
 };
 
-api.findMissionByParams = (req, res) => {
+exports.findMissionByParams = (req, res) => {
   Mission.find(req.query, function (err, mission) {
     if (err) {
       res.status(400).send(err);
@@ -30,7 +28,7 @@ api.findMissionByParams = (req, res) => {
   });
 };
 
-api.findPublicMissions = (req, res) => {
+exports.findPublicMissions = (req, res) => {
   Mission.find({ is_public: true }, async function (err, missions) {
     if (err) {
       res.status(400).send(err);
@@ -64,7 +62,7 @@ api.findPublicMissions = (req, res) => {
   });
 };
 
-api.findPrivateMission = (req, res) => {
+exports.findPrivateMission = (req, res) => {
   Mission.findOne({ secret_code: req.query.secret_code }, async function (err, mission) {
     if (err) {
       res.status(400).send(err);
@@ -93,40 +91,16 @@ api.findPrivateMission = (req, res) => {
   });
 };
 
-api.createMission = (req, res) => {
-  var mission = new Mission();
-  mission.name = req.body.name;
-  mission._user = req.body._user;
-  mission.description = req.body.description;
-  mission.points = req.body.points;
+exports.createMission = async (req, res) => {
+  var mission = new Mission(req.body);
+  mission._user = req.user.id;
   mission.secret_code = generateSecretCode();
-  mission.is_public = req.body.is_public;
-  mission.is_grupal = req.body.is_grupal;
-  mission.single_answer = req.body.single_answer;
-  mission.has_image = req.body.has_image;
-  mission.has_audio = req.body.has_audio;
-  mission.has_video = req.body.has_video;
-  mission.has_text = req.body.has_text;
-  mission.has_geolocation = req.body.has_geolocation;
-  mission.end_message = req.body.end_message;
 
-  let startTime = new Date(req.body.start_time);
-  let endTime = new Date(req.body.end_time);
-  startTime.setHours(23, 59, 0);
-  endTime.setHours(23, 59, 0);
-  mission.start_time = startTime;
-  mission.end_time = endTime;
-
-  mission.save(function (err) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).send(mission);
-    }
-  });
+  await mission.save();
+  res.send(mission);
 };
 
-api.updateMission = (req, res) => {
+exports.updateMission = (req, res) => {
   Mission.findById(req.params.mission_id, function (err, mission) {
     if (err) throw err;
 
@@ -163,7 +137,7 @@ api.updateMission = (req, res) => {
   });
 };
 
-api.deleteMission = (req, res) => {
+exports.deleteMission = (req, res) => {
   Mission.remove({ _id: req.params.mission_id }, function (err) {
     if (err) {
       res.status(400).send(err);
