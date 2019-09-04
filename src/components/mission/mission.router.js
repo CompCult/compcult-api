@@ -5,6 +5,8 @@ const missionCtrl = require('./mission.controller');
 
 router.get('/', missionCtrl.listMissions);
 
+router.get('/:missionId', missionCtrl.getMission);
+
 router.get('/query/fields', missionCtrl.findMissionByParams);
 
 router.get('/public', missionCtrl.findPublicMissions);

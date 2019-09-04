@@ -13,6 +13,11 @@ api.listMissions = (req, res) => {
   });
 };
 
+api.getMission = async (req, res) => {
+  const mission = await Mission.findById(req.params.missionId);
+  res.send(mission);
+};
+
 api.findMissionByParams = (req, res) => {
   Mission.find(req.query, function (err, mission) {
     if (err) {
