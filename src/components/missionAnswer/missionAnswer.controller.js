@@ -1,4 +1,4 @@
-var User = require('../user/user.model.js');
+var { User } = require('../user/user.model.js');
 var Group = require('../group/group.model');
 var Mission = require('../mission/mission.model.js');
 var MissionAnswer = require('./missionAnswer.model.js');
