@@ -35,4 +35,4 @@ const Quiz = new Schema({
   }
 });
 
-module.exports = mongoose.model('quiz', Quiz);
+module.exports = mongoose.model('Quiz', Quiz);

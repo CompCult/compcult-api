@@ -1,10 +1,13 @@
 const express = require('express');
 const router = express.Router();
+
 const userMiddleware = require('../user/user.middlewares');
 const quizMiddleware = require('./quiz.middlewares');
 const userModel = require('../user/user.model');
-
 const quizCtrl = require('./quiz.controller');
+const quizAnswerRouter = require('../quizAnswer/quizAnswer.router');
+
+router.use('/:quizId/answers', userMiddleware.authorize(), quizAnswerRouter);
 
 router.get('/', quizCtrl.listQuizzes);
 

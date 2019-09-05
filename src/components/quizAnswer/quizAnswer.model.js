@@ -1,24 +1,25 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var autoInc = require('mongoose-sequence')(mongoose);
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const ObjectId = mongoose.Types.ObjectId;
 
-var QuizAnswer = new Schema({
-  _id: Number,
+const QuizAnswer = new Schema({
   _user: {
-    type: Number,
+    type: ObjectId,
     ref: 'User'
   },
   _quiz: {
-    type: Number,
-    ref: './quiz.js'
+    type: ObjectId,
+    ref: 'Quiz'
   },
   answer: String,
-  approved: Boolean,
+  approved: {
+    type: Boolean,
+    default: false
+  },
   created_at: {
     type: Date,
     default: Date.now
   }
 });
 
-QuizAnswer.plugin(autoInc, { id: 'quiz_answer_id' });
 module.exports = mongoose.model('quiz_answer', QuizAnswer);

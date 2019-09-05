@@ -1,18 +1,21 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router({ mergeParams: true });
 
 const quizAnswerCtrl = require('./quizAnswer.controller');
+const quizAnswerMiddleware = require('./quizAnswer.middlewares');
 
 router.get('/', quizAnswerCtrl.listQuizAnswers);
 
-router.get('/:answer_id', quizAnswerCtrl.getQuizAnswer);
-
-router.get('/query/fields', quizAnswerCtrl.findQuizAnswerByParams);
+router.get('/:quizAnswerId', quizAnswerCtrl.getQuizAnswer);
 
 router.post('/', quizAnswerCtrl.createQuizAnswer);
 
-router.put('/:answer_id', quizAnswerCtrl.updateQuizAnswer);
+router.put('/:quizAnswerId', [
+  quizAnswerMiddleware.getQuizAnswer
+], quizAnswerCtrl.updateQuizAnswer);
 
-router.delete('/:quizAnswer_id', quizAnswerCtrl.deleteQuizAnswer);
+router.delete('/:quizAnswerId', [
+  quizAnswerMiddleware.getQuizAnswer
+], quizAnswerCtrl.deleteQuizAnswer);
 
 module.exports = router;
