@@ -100,51 +100,27 @@ exports.createMission = async (req, res) => {
   res.send(mission);
 };
 
-exports.updateMission = (req, res) => {
-  Mission.findById(req.params.mission_id, function (err, mission) {
-    if (err) throw err;
+exports.updateMission = async (req, res) => {
+  req.mission.set(req.body);
 
-    if (req.body.name) mission.name = req.body.name;
-    if (req.body.description) mission.description = req.body.description;
-    if (req.body.points) mission.points = req.body.points;
-    if (req.body.is_public !== undefined) mission.is_public = req.body.is_public;
-    if (req.body.is_grupal !== undefined) mission.is_grupal = req.body.is_grupal;
-    if (req.body.single_answer !== undefined) mission.single_answer = req.body.single_answer;
-    if (req.body.has_image !== undefined) mission.has_image = req.body.has_image;
-    if (req.body.has_audio !== undefined) mission.has_audio = req.body.has_audio;
-    if (req.body.has_video !== undefined) mission.has_video = req.body.has_video;
-    if (req.body.has_text !== undefined) mission.has_text = req.body.has_text;
-    if (req.body.has_geolocation !== undefined) mission.has_geolocation = req.body.has_geolocation;
-    if (req.body.end_message) mission.end_message = req.body.end_message;
-    if (req.body.start_time) {
-      const startTime = new Date(req.body.start_time);
-      startTime.setHours(23, 59, 0);
-      mission.start_time = startTime;
-    }
-    if (req.body.end_time) {
-      const endTime = new Date(req.body.end_time);
-      endTime.setHours(23, 59, 0);
-      mission.end_time = endTime;
-    }
+  if (req.body.start_time) {
+    const startTime = new Date(req.body.start_time);
+    startTime.setHours(23, 59, 0);
+    req.mission.start_time = startTime;
+  }
+  if (req.body.end_time) {
+    const endTime = new Date(req.body.end_time);
+    endTime.setHours(23, 59, 0);
+    req.mission.end_time = endTime;
+  }
 
-    mission.save(function (err) {
-      if (err) {
-        res.status(400).send(err);
-      } else {
-        res.status(200).send(mission);
-      }
-    });
-  });
+  await req.mission.save();
+  res.send(req.mission);
 };
 
-exports.deleteMission = (req, res) => {
-  Mission.remove({ _id: req.params.mission_id }, function (err) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).send('Missão removida.');
-    }
-  });
+exports.deleteMission = async (req, res) => {
+  await req.mission.delete();
+  res.send(req.mission);
 };
 
 async function wasMissionAnswered (mission, user) {

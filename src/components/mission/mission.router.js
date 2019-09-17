@@ -3,6 +3,7 @@ const router = express.Router();
 const userMiddleware = require('../user/user.middlewares');
 const userModel = require('../user/user.model');
 const missionCtrl = require('./mission.controller');
+const missionMiddlewares = require('./mission.middlewares');
 
 router.get('/', missionCtrl.listMissions);
 
@@ -18,8 +19,16 @@ router.post('/', [
   userMiddleware.authorize(userModel.userTypes.TEACHER)
 ], missionCtrl.createMission);
 
-router.put('/:mission_id', missionCtrl.updateMission);
+router.put('/:missionId', [
+  userMiddleware.authorize(userModel.userTypes.TEACHER),
+  missionMiddlewares.getMission,
+  missionMiddlewares.isOwner
+], missionCtrl.updateMission);
 
-router.delete('/:mission_id', missionCtrl.deleteMission);
+router.delete('/:missionId', [
+  userMiddleware.authorize(userModel.userTypes.TEACHER),
+  missionMiddlewares.getMission,
+  missionMiddlewares.isOwner
+], missionCtrl.deleteMission);
 
 module.exports = router;
