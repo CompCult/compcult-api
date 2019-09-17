@@ -1,7 +1,6 @@
 const general = require('../routes/general.js');
 const users = require('../components/user/user.router.js');
 const missions = require('../components/mission/mission.router');
-const missionsAnswer = require('../components/missionAnswer/missionAnswer.router');
 const quizzes = require('../components/quiz/quiz.router.js');
 const groups = require('../components/group/group.router');
 const groupMember = require('../components/groupMember/groupMember.router');
@@ -16,7 +15,6 @@ module.exports = app => {
   app.use('/general', general);
   app.use('/users', users);
   app.use('/missions', missions);
-  app.use('/missions_answers', missionsAnswer);
   app.use('/quizzes', quizzes);
   app.use('/groups', groups);
   app.use('/group_members', groupMember);

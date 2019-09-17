@@ -4,6 +4,9 @@ const userMiddleware = require('../user/user.middlewares');
 const userModel = require('../user/user.model');
 const missionCtrl = require('./mission.controller');
 const missionMiddlewares = require('./mission.middlewares');
+const missionAnswerRouter = require('../missionAnswer/missionAnswer.router');
+
+router.use('/:missionId/answers', userMiddleware.authorize(), missionAnswerRouter);
 
 router.get('/', missionCtrl.listMissions);
 

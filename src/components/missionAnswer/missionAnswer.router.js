@@ -1,11 +1,14 @@
 var express = require('express');
-var router = express.Router();
+var router = express.Router({ mergeParams: true });
 
 const missionAnswerCtrl = require('./missionAnswer.controller');
+const missionAnswerMiddleware = require('./missionAnswer.middlewares');
 
 router.get('/', missionAnswerCtrl.listMissionAnswers);
 
-router.get('/:answer_id', missionAnswerCtrl.getMissionAnswer);
+router.get('/:missionAnswerId', [
+  missionAnswerMiddleware.getMissionAnswer
+], missionAnswerCtrl.getMissionAnswer);
 
 router.get('/query/fields', missionAnswerCtrl.findMissionAnswerByParams);
 

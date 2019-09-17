@@ -27,17 +27,7 @@ api.listMissionAnswers = (req, res) => {
 };
 
 api.getMissionAnswer = (req, res) => {
-  MissionAnswer.find({ _id: req.params.answer_id }, async function (err, answer) {
-    if (err) {
-      res.status(400).send(err);
-    } else if (!answer) {
-      res.status(404).send('Resposta não encontrada');
-    } else {
-      let answerComplete = await injectMissionData(answer);
-
-      res.status(200).send(answerComplete);
-    }
-  });
+  res.send(req.mission);
 };
 
 api.findMissionAnswerByParams = (req, res) => {

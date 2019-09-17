@@ -3,7 +3,7 @@ const Mission = require('./mission.model');
 
 exports.getMission = async (req, res, next) => {
   const mission = await Mission.findById(req.params.missionId);
-  if (!mission) return res.status(404).send('Mission not found :/');
+  if (!mission) return res.status(404).send('Mission not found');
 
   req.mission = mission;
   next();
