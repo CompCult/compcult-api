@@ -1,9 +1,21 @@
-const { User } = require('../user/user.model.js');
+const { User, userTypes } = require('../user/user.model.js');
 const Quiz = require('../quiz/quiz.model.js');
 const QuizAnswer = require('./quizAnswer.model.js');
 
 exports.listQuizAnswers = async (req, res) => {
-  const quizAnswers = await QuizAnswer.find({ _quiz: req.params.quizId, ...req.query });
+  let quizAnswers = [];
+  if (req.user.type === userTypes.STUDENT) {
+    quizAnswers = await QuizAnswer.find({
+      _quiz: req.params.quizId,
+      ...req.query,
+      _user: req.user.id
+    });
+  } else if (req.user.type === userTypes.TEACHER) {
+    quizAnswers = await QuizAnswer.find({
+      _quiz: req.params.quizId,
+      ...req.query
+    });
+  }
   res.send(quizAnswers);
 };
 

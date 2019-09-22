@@ -7,7 +7,7 @@ const userModel = require('../user/user.model');
 const quizCtrl = require('./quiz.controller');
 const quizAnswerRouter = require('../quizAnswer/quizAnswer.router');
 
-router.use('/:quizId/answers', userMiddleware.authorize(), quizAnswerRouter);
+router.use('/:quizId/answers', quizAnswerRouter);
 
 router.get('/', quizCtrl.listQuizzes);
 

@@ -26,31 +26,19 @@ api.authorize = (authorizationLevel) => async (req, res, next) => {
 };
 
 function checkAuthorizationLevel (authorizationLevel, userType) {
-  const levels = [userTypes.MANAGER, userTypes.TEACHER, userTypes.STUDENT];
   let result = false;
 
   switch (authorizationLevel) {
     case userTypes.MANAGER:
-      result = levels.slice(0, 1).includes(userType);
+      result = userType === userTypes.MANAGER;
       break;
     case userTypes.TEACHER:
-      result = levels.slice(0, 2).includes(userType);
+      result = userType === userTypes.MANAGER || userType === userTypes.TEACHER;
       break;
     case userTypes.STUDENT:
-      result = levels.slice(0, 3).includes(userType);
+      result = userType === userTypes.MANAGER || userType === userTypes.STUDENT;
   }
 
   console.log(result);
   return result;
 }
-
-api.teacher = (req, res, next) => {
-  if (![
-    userTypes.MANAGER,
-    userTypes.TEACHER
-  ].includes(req.user.type)) {
-    return res.status(401).send('You do not have the permission level required to access this feature.');
-  }
-
-  next();
-};
