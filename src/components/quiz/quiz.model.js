@@ -10,7 +10,7 @@ const Quiz = new Schema({
   title: String,
   description: String,
   points: Number,
-  secret_code: String,
+  secret_code: { type: String, default: generateSecretCode },
   is_public: Boolean,
   single_answer: {
     type: Boolean,
@@ -33,6 +33,24 @@ const Quiz = new Schema({
     type: Date,
     default: Date.now
   }
+}, {
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 });
+
+Quiz.virtual('active').get(function () {
+  return this.end_time
+    ? this.start_time.getTime() <= Date.now() && Date.now() <= this.end_time.getTime()
+    : this.start_time.getTime() <= Date.now();
+});
+
+function generateSecretCode () {
+  var text = '';
+  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  for (var i = 0; i < 6; i++) { text += possible.charAt(Math.floor(Math.random() * possible.length)); }
+
+  return text;
+};
 
 module.exports = mongoose.model('Quiz', Quiz);

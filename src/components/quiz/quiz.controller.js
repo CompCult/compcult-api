@@ -1,122 +1,45 @@
-var Quiz = require('./quiz.model');
-var QuizAnswer = require('../quizAnswer/quizAnswer.model');
+const Quiz = require('./quiz.model');
+const _ = require('lodash');
 
-const api = module.exports;
+exports.listQuizzes = async (req, res) => {
+  let query = _.omit(req.query, 'active');
 
-api.listQuizzes = async (req, res) => {
-  const quizzes = await Quiz.find(req.query);
+  if (Object.keys(req.query).includes('active')) {
+    if (Number(req.query.active)) {
+      query.start_time = { $lte: new Date() };
+      query.$or = [
+        { end_time: null }, { end_time: { $gte: new Date() } }
+      ];
+    } else {
+      query.$or = [{ start_time: { $gt: Date.now() } },
+        { end_time: { $lt: Date.now() } }];
+    }
+  }
+
+  const quizzes = await Quiz.find(query);
   res.send(quizzes);
 };
 
-api.getQuiz = (req, res) => {
+exports.getQuiz = (req, res) => {
   res.send(req.quiz);
 };
 
-api.findPublicQuizzes = function (req, res) {
-  Quiz.find({ is_public: true }, async function (err, quizzes) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      var result = [];
-      let date = new Date();
-
-      for (var i = 0; i < quizzes.length; i++) {
-        let quiz = quizzes[i];
-        let endTime = new Date(quiz.end_time);
-        endTime.setHours(23, 59, 0);
-        let inTime = endTime.getTime() >= date.getTime();
-
-        if (quiz.single_answer) {
-          await wasQuizAnswered(quiz._id, req.query.user_id).then((answered) => {
-            if (!answered && inTime) {
-              result.push(quiz);
-            }
-          });
-        } else if (!quiz.single_answer && inTime) {
-          result.push(quiz);
-        }
-      }
-    }
-
-    res.status(200).send(result);
-  });
-};
-
-api.findPrivateQuiz = function (req, res) {
-  Quiz.findOne({ secret_code: req.query.secret_code }, async function (err, quiz) {
-    if (err) {
-      res.status(400).send(err);
-    } else if (!quiz) {
-      res.status(404).send('Quiz não encontrado');
-    } else {
-      let endTime = new Date(quiz.end_time);
-      endTime.setHours(23, 59, 0);
-      let date = new Date();
-      let answered;
-
-      try {
-        answered = await wasQuizAnswered(quiz._id, req.query.user_id);
-      } catch (err) {
-        res.status(400).send(err);
-      }
-
-      if (endTime < date) {
-        res.status(401).send('Quiz expirado');
-      } else if (quiz.single_answer && answered) {
-        res.status(401).send('Quiz já foi respondido');
-      } else {
-        res.status(200).json(quiz);
-      }
-    }
-  });
-};
-
-api.createQuizz = async (req, res) => {
+exports.createQuizz = async (req, res) => {
   var quiz = new Quiz(req.body);
   quiz._user = req.user.id;
-  quiz.secret_code = generateSecretCode();
 
   await quiz.save();
   res.send(quiz);
 };
 
-api.updateQuiz = async (req, res) => {
-  const quiz = req.quiz;
+exports.updateQuiz = async (req, res) => {
+  req.quiz.set(req.body);
+  await req.quiz.save();
 
-  quiz.set(req.body);
-
-  if (req.body.start_time) {
-    const startTime = new Date(req.body.start_time);
-    startTime.setHours(23, 59, 0);
-    quiz.start_time = startTime;
-  }
-  if (req.body.end_time) {
-    const endTime = new Date(req.body.end_time);
-    endTime.setHours(23, 59, 0);
-    quiz.end_time = endTime;
-  }
-
-  await quiz.save();
-  res.send(quiz);
+  res.send(req.quiz);
 };
 
-api.deleteQuiz = async (req, res) => {
-  const quiz = req.quiz;
-  await quiz.delete();
-
-  res.send(quiz);
-};
-
-async function wasQuizAnswered (quiz, user) {
-  const answers = await QuizAnswer.find({ _quiz: quiz, _user: user }).exec();
-  return answers.length > 0;
-};
-
-function generateSecretCode () {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-  for (var i = 0; i < 6; i++) { text += possible.charAt(Math.floor(Math.random() * possible.length)); }
-
-  return text;
+exports.deleteQuiz = async (req, res) => {
+  await req.quiz.delete();
+  res.send(req.quiz);
 };

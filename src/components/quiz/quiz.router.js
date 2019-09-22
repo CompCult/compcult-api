@@ -15,10 +15,6 @@ router.get('/:quizId', [
   quizMiddleware.getQuiz
 ], quizCtrl.getQuiz);
 
-router.get('/public', quizCtrl.findPublicQuizzes);
-
-router.get('/private', quizCtrl.findPrivateQuiz);
-
 router.post('/', [
   userMiddleware.authorize(userModel.userTypes.TEACHER)
 ], quizCtrl.createQuizz);
