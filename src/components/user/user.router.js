@@ -4,6 +4,7 @@ const validate = require('../../validate');
 const { validateUser } = require('./user.model');
 
 const userController = require('./user.controller');
+const userMiddleware = require('./user.middlewares');
 
 router.get('/', userController.listUsers);
 
@@ -22,6 +23,8 @@ router.post('/update/:user_id', userController.updateUser);
 router.put('/:user_id', userController.updateUser);
 
 router.post('/auth', userController.authenticate);
+
+router.post('/refresh-token', userMiddleware.authorize(), userController.refreshToken);
 
 router.delete('/:user_id', userController.deleteUser);
 

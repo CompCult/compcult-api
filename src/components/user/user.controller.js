@@ -199,6 +199,11 @@ async function authenticate (req, res) {
   });
 }
 
+const refreshToken = async (req, res) => {
+  const user = await User.findById(req.user.id);
+  res.send(user.generateToken());
+};
+
 function deleteUser (req, res) {
   User.remove({ _id: req.params.user_id }, function (err) {
     if (err) {
@@ -228,5 +233,6 @@ module.exports = {
   recoveryPassword,
   updateUser,
   authenticate,
+  refreshToken,
   deleteUser
 };
