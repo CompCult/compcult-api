@@ -1,3 +1,5 @@
+const logger = require('../config/winston');
+
 module.exports = app => {
   app.use((req, res, next) => {
     const err = new Error('Resource not found');
@@ -7,7 +9,8 @@ module.exports = app => {
 
   app.use((err, req, res, next) => {
     const status = err.status || 500;
-    res.status(status).send(err.message);
+    logger.error(err.stack);
+    res.status(status).send('Internal server error');
   });
 };
 

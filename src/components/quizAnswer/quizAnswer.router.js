@@ -8,19 +8,19 @@ const userMiddleware = require('../user/user.middlewares');
 
 router.get('/', userMiddleware.authorize(), quizAnswerCtrl.listQuizAnswers);
 
-router.get('/:quizAnswerId', quizAnswerCtrl.getQuizAnswer);
+router.get('/:quizAnswerId', userMiddleware.authorize(), quizAnswerCtrl.getQuizAnswer);
 
 router.post('/', [
   userMiddleware.authorize(userModel.userTypes.STUDENT)
 ], quizAnswerCtrl.createQuizAnswer);
 
 router.put('/:quizAnswerId', [
-  userMiddleware.authorize(userModel.userTypes.STUDENT),
+  userMiddleware.authorize(),
   quizAnswerMiddleware.getQuizAnswer
 ], quizAnswerCtrl.updateQuizAnswer);
 
 router.delete('/:quizAnswerId', [
-  userMiddleware.authorize(userModel.userTypes.STUDENT),
+  userMiddleware.authorize(),
   quizAnswerMiddleware.getQuizAnswer
 ], quizAnswerCtrl.deleteQuizAnswer);
 

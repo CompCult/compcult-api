@@ -35,7 +35,7 @@ exports.getQuiz = (req, res) => {
 };
 
 exports.createQuizz = async (req, res) => {
-  var quiz = new Quiz(req.body);
+  const quiz = new Quiz(req.body);
   quiz._user = req.user.id;
 
   await quiz.save();

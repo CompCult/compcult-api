@@ -3,19 +3,16 @@ const Quiz = require('../quiz/quiz.model.js');
 const QuizAnswer = require('./quizAnswer.model.js');
 
 exports.listQuizAnswers = async (req, res) => {
-  let quizAnswers = [];
+  const query = {
+    ...req.query,
+    _quiz: req.params.quizId
+  };
+
   if (req.user.type === userTypes.STUDENT) {
-    quizAnswers = await QuizAnswer.find({
-      _quiz: req.params.quizId,
-      ...req.query,
-      _user: req.user.id
-    });
-  } else if (req.user.type === userTypes.TEACHER) {
-    quizAnswers = await QuizAnswer.find({
-      _quiz: req.params.quizId,
-      ...req.query
-    });
+    query._user = req.user.id;
   }
+
+  const quizAnswers = await QuizAnswer.find(query);
   res.send(quizAnswers);
 };
 
