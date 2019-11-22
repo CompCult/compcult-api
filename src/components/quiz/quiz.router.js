@@ -9,7 +9,7 @@ const quizAnswerRouter = require('../quizAnswer/quizAnswer.router');
 
 router.use('/:quizId/answers', quizAnswerRouter);
 
-router.get('/', quizCtrl.listQuizzes);
+router.get('/', userMiddleware.authorize(), quizCtrl.listQuizzes);
 
 router.get('/:quizId', [
   quizMiddleware.getQuiz

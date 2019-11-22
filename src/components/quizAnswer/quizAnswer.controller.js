@@ -1,6 +1,7 @@
 const { User, userTypes } = require('../user/user.model.js');
 const Quiz = require('../quiz/quiz.model.js');
 const QuizAnswer = require('./quizAnswer.model.js');
+const mongoose = require('mongoose');
 
 exports.listQuizAnswers = async (req, res) => {
   const query = {
@@ -25,9 +26,15 @@ exports.createQuizAnswer = async (req, res) => {
     ...req.body,
     _user: req.user.id,
     _quiz: req.params.quizId,
-    approved: await verifyAnswer(req.params.quizId, req.body.answer)
-  });
 
+    approved: await verifyAnswer(req.params.quizId, req.body.answer)
+    
+  });
+  const id = mongoose.Types.ObjectId(req.user.id);
+  const quiz = await Quiz.findById(req.params.quizId);
+  console.log(quiz); 
+  quiz.users.push(id);
+  await quiz.save();
   await quizAnswer.save();
   res.status(201).send(quizAnswer);
 };

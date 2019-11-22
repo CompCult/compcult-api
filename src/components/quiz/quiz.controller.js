@@ -1,9 +1,10 @@
 const Quiz = require('./quiz.model');
 // const { userTypes } = require('../user/user.model');
 const _ = require('lodash');
+const mongoose = require("mongoose");
 
 exports.listQuizzes = async (req, res) => {
-  let query = _.omit(req.query, 'active');
+  let query = _.omit(req.query, ['active', 'answered']);
 
   if (Object.keys(req.query).includes('active')) {
     if (Number(req.query.active)) {
@@ -17,15 +18,14 @@ exports.listQuizzes = async (req, res) => {
     }
   }
 
-  /*   if (req.user.type === userTypes.STUDENT) {
-      if (Object.keys(req.query).contains('answered')) {
-        if (Number(req.query.active)) {
-          const answers = await QuizAnswer.find({ _quiz: req.quizId, _user: req.user });
-          return answers.length > 0;
-        }
-      }
-    } */
-
+  if(Object.keys(req.query).includes('answered')){
+    if(!Number(req.query.answered)){
+        const userId = mongoose.Types.ObjectId(req.user.id);
+        console.log(req.user.id);
+        query.users = {"$not": {"$all": [userId]}};
+    }
+  }
+  console.log(query);
   const quizzes = await Quiz.find(query);
   res.send(quizzes);
 };
@@ -53,3 +53,4 @@ exports.deleteQuiz = async (req, res) => {
   await req.quiz.delete();
   res.send(req.quiz);
 };
+
