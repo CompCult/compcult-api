@@ -21,11 +21,10 @@ exports.listQuizzes = async (req, res) => {
   if(Object.keys(req.query).includes('answered')){
     if(!Number(req.query.answered)){
         const userId = mongoose.Types.ObjectId(req.user.id);
-        console.log(req.user.id);
         query.users = {"$not": {"$all": [userId]}};
     }
   }
-  console.log(query);
+  
   const quizzes = await Quiz.find(query);
   res.send(quizzes);
 };

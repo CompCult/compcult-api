@@ -8,6 +8,10 @@ const Mission = new Schema({
     type: ObjectId,
     ref: 'User'
   },
+  users:{
+    type: [{type: ObjectId, ref: 'User'}]
+  },
+  
   description: String,
   points: Number,
   secret_code: String,

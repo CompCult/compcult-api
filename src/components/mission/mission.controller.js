@@ -1,7 +1,10 @@
 const Mission = require('./mission.model');
 const MissionAnswer = require('../missionAnswer/missionAnswer.model.js');
+const mongoose = require('mongoose');
 
 exports.listMissions = (req, res) => {
+  let.query = _.omit(req.query, ['answered']);
+  
   Mission.find({}, function (err, missions) {
     if (err) {
       res.status(400).send(err);
@@ -9,6 +12,18 @@ exports.listMissions = (req, res) => {
       res.status(200).json(missions);
     }
   });
+
+
+  if(Object.keys(req.query).includes('answered')){
+    if((!Number(req.query.answered))){
+      const userId = mongoose.Types.ObjectId(req.user.id);
+      query.users = {"$not": {"$all": [userId]}};
+    }
+  }
+
+  const missions = await Mission.find(query);
+  res.send(missions);
+
 };
 
 exports.getMission = async (req, res) => {
