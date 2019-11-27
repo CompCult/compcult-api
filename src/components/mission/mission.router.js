@@ -8,7 +8,7 @@ const missionAnswerRouter = require('../missionAnswer/missionAnswer.router');
 
 router.use('/:missionId/answers', userMiddleware.authorize(), missionAnswerRouter);
 
-router.get('/', missionCtrl.listMissions);
+router.get('/', userMiddleware.authorize(), missionCtrl.listMissions);
 
 router.get('/:missionId', missionCtrl.getMission);
 
