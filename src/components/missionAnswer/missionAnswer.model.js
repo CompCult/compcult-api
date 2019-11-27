@@ -1,19 +1,20 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var autoInc = require('mongoose-sequence')(mongoose);
+const ObjectId = mongoose.Types.ObjectId;
 
 var MissionAnswer = new Schema({
   _id: Number,
   _user: {
-    type: Number,
+    type: ObjectId,
     ref: 'User'
   },
   _mission: {
-    type: Number,
+    type: ObjectId,
     ref: './mission.js'
   },
   _group: {
-    type: Number,
+    type: ObjectId,
     ref: './group.js'
   },
   status: {

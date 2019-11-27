@@ -1,4 +1,5 @@
 {
     "db": "MONGO_PATH",
-    "port": "PORT"
+    "port": "PORT",
+    "jwtSecret": "JWT_SECRET"
 }

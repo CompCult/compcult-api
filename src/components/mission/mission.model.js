@@ -8,6 +8,10 @@ const Mission = new Schema({
     type: ObjectId,
     ref: 'User'
   },
+  users: {
+    type: [{ type: ObjectId, ref: 'User' }]
+  },
+
   description: String,
   points: Number,
   secret_code: String,
@@ -32,6 +36,6 @@ const Mission = new Schema({
     type: Date,
     default: Date.now
   }
-});
+}, { toJSON: {} });
 
 module.exports = mongoose.model('mission', Mission);

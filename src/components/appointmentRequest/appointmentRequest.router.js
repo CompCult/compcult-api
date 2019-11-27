@@ -2,17 +2,18 @@ var express = require('express');
 var router = express.Router();
 
 const appointmentCtrl = require('./appointmentRequest.controller');
+const { authorize } = require('../user/user.middlewares');
 
-router.get('/', appointmentCtrl.listAppointmentRequests);
+router.get('/', authorize(), appointmentCtrl.listAppointmentRequests);
 
-router.get('/:request_id', appointmentCtrl.getAppointmentRequest);
+router.get('/:request_id', authorize(), appointmentCtrl.getAppointmentRequest);
 
-router.get('/query/fields', appointmentCtrl.findAppointmentRequestByParams);
+router.get('/query/fields', authorize(), appointmentCtrl.findAppointmentRequestByParams);
 
-router.post('/', appointmentCtrl.createAppointmentRequest);
+router.post('/', authorize(), appointmentCtrl.createAppointmentRequest);
 
-router.put('/:request_id', appointmentCtrl.updateAppointmentRequest);
+router.put('/:request_id', authorize(), appointmentCtrl.updateAppointmentRequest);
 
-router.delete('/:request_id', appointmentCtrl.deleteAppointmentRequest);
+router.delete('/:request_id', authorize(), appointmentCtrl.deleteAppointmentRequest);
 
 module.exports = router;

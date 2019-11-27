@@ -5,12 +5,13 @@ const { validateUser } = require('./user.model');
 
 const userController = require('./user.controller');
 const userMiddleware = require('./user.middlewares');
+const { userTypes } = require('./user.model');
 
-router.get('/', userController.listUsers);
+router.get('/', userMiddleware.authorize(userTypes.TEACHER), userController.listUsers);
 
-router.get('/:user_id', userController.findUserById);
+router.get('/:user_id', userMiddleware.authorize(), userController.findUserById);
 
-router.get('/query/fields', userController.listUsers);
+router.get('/query/fields', userMiddleware.authorize(userTypes.TEACHER), userController.listUsers);
 
 router.post('/register', validate(validateUser), userController.createUser);
 
@@ -18,14 +19,14 @@ router.post('/recovery/password_edit', userController.updatePassword);
 
 router.post('/recovery', userController.recoveryPassword);
 
-router.post('/update/:user_id', userController.updateUser);
+router.post('/update/:user_id', userMiddleware.authorize(), userController.updateUser);
 
-router.put('/:user_id', userController.updateUser);
+router.put('/:user_id', userMiddleware.authorize(), userController.updateUser);
 
 router.post('/auth', userController.authenticate);
 
 router.post('/refresh-token', userMiddleware.authorize(), userController.refreshToken);
 
-router.delete('/:user_id', userController.deleteUser);
+router.delete('/:user_id', userMiddleware.authorize(), userController.deleteUser);
 
 module.exports = router;

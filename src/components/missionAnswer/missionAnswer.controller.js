@@ -42,7 +42,7 @@ api.findMissionAnswerByParams = (req, res) => {
   });
 };
 
-api.createMissionAnswer = (req, res) => {
+api.createMissionAnswer = async (req, res) => {
   var missionAnswer = new MissionAnswer();
   missionAnswer._user = req.body._user;
   missionAnswer._mission = req.body._mission;
@@ -72,6 +72,10 @@ api.createMissionAnswer = (req, res) => {
     filename = req.body._user.toString() + timeStamp + '.mp4';
     missionAnswer.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   };
+
+  const mission = await Mission.findById(req.body._mission);
+  mission.users.push(req.body._user);
+  await mission.save();
 
   missionAnswer.save(function (err) {
     if (err) {
