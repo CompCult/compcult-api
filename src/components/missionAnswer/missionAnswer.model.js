@@ -14,7 +14,7 @@ var MissionAnswer = new Schema({
     ref: './mission.js'
   },
   _group: {
-    type: ObjectId,
+    type: Number,
     ref: './group.js'
   },
   status: {

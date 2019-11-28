@@ -1,4 +1,4 @@
-var User = require('../user/user.model');
+var { User } = require('../user/user.model');
 var Group = require('../group/group.model');
 var GroupMember = require('./groupMember.model');
 

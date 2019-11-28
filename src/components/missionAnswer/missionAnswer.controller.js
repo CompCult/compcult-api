@@ -1,5 +1,6 @@
 var { User } = require('../user/user.model.js');
 var Group = require('../group/group.model');
+const GroupMember = require('../groupMember/groupMember.model');
 var Mission = require('../mission/mission.model.js');
 var MissionAnswer = require('./missionAnswer.model.js');
 var Uploads = require('../../upload.js');
@@ -120,10 +121,15 @@ api.updateMissionAnswer = (req, res) => {
     if (req.body.status) {
       missionAnswer.status = req.body.status;
       if (req.body.status === 'Aprovado') {
-        Mission.findById(missionAnswer._mission, function (err, mission) {
+        Mission.findById(missionAnswer._mission, async function (err, mission) {
           if (err) throw err;
-
-          if (mission) {
+          
+          if (mission.is_grupal) {
+            const members = await GroupMember.find({ _group: missionAnswer._group });
+            members.map(member => {
+              recompenseUser(member._user, mission.points);
+            });
+          } else {
             recompenseUser(missionAnswer._user, mission.points);
           }
         });
