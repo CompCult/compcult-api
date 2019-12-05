@@ -7,7 +7,7 @@ const userController = require('./user.controller');
 const userMiddleware = require('./user.middlewares');
 const { userTypes } = require('./user.model');
 
-router.get('/', userMiddleware.authorize(userTypes.TEACHER), userController.listUsers);
+router.get('/', userMiddleware.authorize(), userController.listUsers);
 
 router.get('/:user_id', userMiddleware.authorize(), userController.findUserById);
 

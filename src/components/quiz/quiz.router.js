@@ -6,8 +6,10 @@ const quizMiddleware = require('./quiz.middlewares');
 const userModel = require('../user/user.model');
 const quizCtrl = require('./quiz.controller');
 const quizAnswerRouter = require('../quizAnswer/quizAnswer.router');
+const quizAnalyticsRouter = require('../quizAnalytics/quizAnalytics.router');
 
 router.use('/:quizId/answers', quizAnswerRouter);
+router.use('/:quizId/analytics', quizMiddleware.getQuiz, quizAnalyticsRouter);
 
 router.get('/', userMiddleware.authorize(), quizCtrl.listQuizzes);
 
