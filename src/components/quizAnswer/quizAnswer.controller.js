@@ -28,11 +28,10 @@ exports.createQuizAnswer = async (req, res) => {
     _quiz: req.params.quizId,
 
     approved: await verifyAnswer(req.params.quizId, req.body.answer)
-    
+
   });
   const id = mongoose.Types.ObjectId(req.user.id);
   const quiz = await Quiz.findById(req.params.quizId);
-  console.log(quiz); 
   quiz.users.push(id);
   await quiz.save();
   await quizAnswer.save();
@@ -49,8 +48,8 @@ exports.deleteQuizAnswer = async (req, res) => {
   res.send(req.quizAnswer);
 };
 
-async function verifyAnswer (quizId, answer) {
-  let quiz = await Quiz.findById(quizId).exec();
+async function verifyAnswer(quizId, answer) {
+  let quiz = await Quiz.findById(quizId);
 
   if (quiz.correct_answer && quiz.correct_answer === answer) {
     recompenseUser(answer._user, quiz.points);
@@ -60,7 +59,7 @@ async function verifyAnswer (quizId, answer) {
   }
 };
 
-function recompenseUser (userId, points) {
+function recompenseUser(userId, points) {
   User.findById(userId, function (err, user) {
     if (err) throw err;
 
@@ -68,8 +67,6 @@ function recompenseUser (userId, points) {
       user.points += points;
       user.save(function (err) {
         if (err) throw err;
-
-        console.log('Usuário recompensado');
       });
     }
   });
