@@ -6,7 +6,7 @@ var MissionAnswer = require('./missionAnswer.model.js');
 var Uploads = require('../../upload.js');
 const mongoose = require('mongoose');
 
-exports.listMissionAnswers = (req, res) => {
+exports.listMissionAnswers = async (req, res) => {
   const query = {
     ...req.query,
     _mission: req.params.quizId
