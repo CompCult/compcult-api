@@ -1,52 +1,36 @@
-var { User } = require('../user/user.model.js');
+var { User, userTypes } = require('../user/user.model.js');
 var Group = require('../group/group.model');
 const GroupMember = require('../groupMember/groupMember.model');
 var Mission = require('../mission/mission.model.js');
 var MissionAnswer = require('./missionAnswer.model.js');
 var Uploads = require('../../upload.js');
+const mongoose = require('mongoose');
 
-const api = module.exports;
+exports.listMissionAnswers = (req, res) => {
+  const query = {
+    ...req.query,
+    _mission: req.params.quizId
+  };
 
-api.listMissionAnswers = (req, res) => {
-  MissionAnswer.find({}, function (err, missions) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      let promises;
+  if (req.query.type === userTypes.STUDENT){
+    query._user = req.user.id;
+  }
 
-      try {
-        promises = missions.map(injectMissionData);
-      } catch (err) {
-        res.status(400).send(err);
-      }
+  const missionAnswers = await MissionAnswer.find(query);
+  res.send(missionAnswers);
+};
 
-      Promise.all(promises).then(function (results) {
-        res.status(200).json(results);
-      });
-    }
+exports.getMissionAnswer = async(req, res) => {
+  res.send(req.missionAnswer);
+};
+
+exports.createMissionAnswer = async (req, res) => {
+  const missionAnswer = new MissionAnswer({
+    ...req.body,
+    _user: req.user.id,
+    _mission: req.params.missionId,
   });
-};
 
-api.getMissionAnswer = (req, res) => {
-  res.send(req.mission);
-};
-
-api.findMissionAnswerByParams = (req, res) => {
-  MissionAnswer.find(req.query, function (err, answer) {
-    if (err) {
-      res.status(400).send(err);
-    } else if (!answer) {
-      res.status(404).send('Resposta da missão não encontrada');
-    } else {
-      res.status(200).json(answer);
-    }
-  });
-};
-
-api.createMissionAnswer = async (req, res) => {
-  var missionAnswer = new MissionAnswer();
-  missionAnswer._user = req.body._user;
-  missionAnswer._mission = req.body._mission;
   missionAnswer.status = 'Pendente';
   const date = new Date();
   const timeStamp = date.toLocaleString();
@@ -74,20 +58,15 @@ api.createMissionAnswer = async (req, res) => {
     missionAnswer.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   };
 
-  const mission = await Mission.findById(req.body._mission);
-  mission.users.push(req.body._user);
+  const id = mongoose.Types.ObjectId(req.user.id);
+  const mission = await Mission.findById(req.body.missionId);
+  mission.users.push(id);
   await mission.save();
-
-  missionAnswer.save(function (err) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).send(missionAnswer);
-    }
-  });
+  await missionAnswer.save();
+  res.status(201).send(missionAnswer);
 };
 
-api.updateMissionAnswer = (req, res) => {
+exports.updateMissionAnswer = (req, res) => {
   MissionAnswer.findById(req.params.mission_id, function (err, missionAnswer) {
     if (err) throw err;
 
@@ -146,17 +125,12 @@ api.updateMissionAnswer = (req, res) => {
   });
 };
 
-api.deleteMissionAnswer = (req, res) => {
-  MissionAnswer.remove({ _id: req.params.mission_id }, function (err) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).send('Missão removida.');
-    }
-  });
+exports.deleteMissionAnswer = (req, res) => {
+  req.missionAnswer.delete();
+  res.send(req.missionAnswer);
 };
 
-api.findMissionFromMissionAnswer = (req, res) => {
+exports.findMissionFromMissionAnswer = (req, res) => {
   var missionName = req.query.missionname;
   MissionAnswer.find({ mail: missionName }, function (err, mission) {
     if (err != null) {
