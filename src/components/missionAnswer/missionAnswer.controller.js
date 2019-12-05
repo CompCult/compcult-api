@@ -6,13 +6,13 @@ var MissionAnswer = require('./missionAnswer.model.js');
 var Uploads = require('../../upload.js');
 const mongoose = require('mongoose');
 
-exports.listMissionAnswers = (req, res) => {
+exports.listMissionAnswers = async (req, res) => {
   const query = {
     ...req.query,
-    _mission: req.params.quizId
+    _mission: req.params.missionId
   };
 
-  if (req.query.type === userTypes.STUDENT){
+  if (req.query.type === userTypes.STUDENT) {
     query._user = req.user.id;
   }
 
@@ -20,7 +20,7 @@ exports.listMissionAnswers = (req, res) => {
   res.send(missionAnswers);
 };
 
-exports.getMissionAnswer = async(req, res) => {
+exports.getMissionAnswer = async (req, res) => {
   res.send(req.missionAnswer);
 };
 
@@ -40,26 +40,26 @@ exports.createMissionAnswer = async (req, res) => {
   if (req.body.location_lat) missionAnswer.location_lat = req.body.location_lat;
   if (req.body.location_lng) missionAnswer.location_lng = req.body.location_lng;
   if (req.body.image) {
-    filename = req.body._user.toString() + timeStamp + '.jpg';
+    filename = req.user.id + timeStamp + '.jpg';
 
-    Uploads.uploadFile(req.body.image, req.body._user.toString(), timeStamp);
+    Uploads.uploadFile(req.body.image, req.user.id, timeStamp);
     missionAnswer.image = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   };
   if (req.body.audio) {
-    Uploads.uploadAudio(req.body.audio, req.body._user.toString(), timeStamp);
+    Uploads.uploadAudio(req.body.audio, req.user.id, timeStamp);
 
-    filename = req.body._user.toString() + timeStamp + '.wav';
+    filename = req.user.id + timeStamp + '.wav';
     missionAnswer.audio = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   };
   if (req.body.video) {
-    Uploads.uploadVideo(req.body.video, req.body._user.toString(), timeStamp);
+    Uploads.uploadVideo(req.body.video, req.user.id, timeStamp);
 
-    filename = req.body._user.toString() + timeStamp + '.mp4';
+    filename = req.user.id + timeStamp + '.mp4';
     missionAnswer.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   };
 
   const id = mongoose.Types.ObjectId(req.user.id);
-  const mission = await Mission.findById(req.body.missionId);
+  const mission = await Mission.findById(req.params.missionId);
   mission.users.push(id);
   await mission.save();
   await missionAnswer.save();
@@ -67,7 +67,7 @@ exports.createMissionAnswer = async (req, res) => {
 };
 
 exports.updateMissionAnswer = (req, res) => {
-  MissionAnswer.findById(req.params.mission_id, function (err, missionAnswer) {
+  MissionAnswer.findById(req.params.missionAnswerId, function (err, missionAnswer) {
     if (err) throw err;
 
     const date = new Date();
@@ -102,7 +102,7 @@ exports.updateMissionAnswer = (req, res) => {
       if (req.body.status === 'Aprovado') {
         Mission.findById(missionAnswer._mission, async function (err, mission) {
           if (err) throw err;
-          
+
           if (mission.is_grupal) {
             const members = await GroupMember.find({ _group: missionAnswer._group });
             members.map(member => {
@@ -125,37 +125,12 @@ exports.updateMissionAnswer = (req, res) => {
   });
 };
 
-exports.deleteMissionAnswer = (req, res) => {
-  req.missionAnswer.delete();
-  res.send(req.missionAnswer);
+exports.deleteMissionAnswer = async (req, res) => {
+  const missionAnswer = await MissionAnswer.findByIdAndDelete(req.params.missionAnswerId);
+  res.send(missionAnswer);
 };
 
-exports.findMissionFromMissionAnswer = (req, res) => {
-  var missionName = req.query.missionname;
-  MissionAnswer.find({ mail: missionName }, function (err, mission) {
-    if (err != null) {
-      console.log(err);
-    }
-    res.json(mission);
-  });
-};
-
-async function injectMissionData (answer) {
-  let string = JSON.stringify(answer);
-  let answerComplete = JSON.parse(string);
-
-  let userobj = await User.findById(answer._user).exec();
-  let missionObj = await Mission.findById(answer._mission).exec();
-  let groupObj = await Group.findById(answer._group).exec();
-
-  answerComplete._user = userobj;
-  answerComplete._group = groupObj;
-  answerComplete._mission = missionObj;
-
-  return answerComplete;
-};
-
-function recompenseUser (userId, points) {
+function recompenseUser(userId, points) {
   User.findById(userId, function (err, user) {
     if (err) throw err;
 
