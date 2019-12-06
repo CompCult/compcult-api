@@ -1,10 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var autoInc = require('mongoose-sequence')(mongoose);
 const ObjectId = mongoose.Types.ObjectId;
 
 var MissionAnswer = new Schema({
-  _id: Number,
   _user: {
     type: ObjectId,
     ref: 'User'
@@ -33,5 +31,4 @@ var MissionAnswer = new Schema({
   }
 });
 
-MissionAnswer.plugin(autoInc, { id: 'answer_id' });
 module.exports = mongoose.model('mission_answer', MissionAnswer);
