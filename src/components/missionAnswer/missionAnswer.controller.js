@@ -23,7 +23,11 @@ exports.listMissionAnswers = async (req, res) => {
 };
 
 exports.getMissionAnswer = async (req, res) => {
-  res.send(req.missionAnswer);
+  res.send(await req.missionAnswer
+    .populate({ path: '_user', select: 'name' })
+    .populate({ path: '_mission', select: 'name' })
+    .execPopulate()
+  );
 };
 
 exports.createMissionAnswer = async (req, res) => {
