@@ -14,24 +14,16 @@ router.get('/:missionAnswerId', [
   missionAnswerMiddleware.getMissionAnswer
 ], missionAnswerCtrl.getMissionAnswer);
 
-router.get('/query/fields', [
-  authorize()
-], missionAnswerCtrl.findMissionAnswerByParams);
-
 router.post('/', [
   authorize()
 ], missionAnswerCtrl.createMissionAnswer);
 
-router.put('/:mission_id', [
+router.put('/:missionAnswerId', [
   authorize()
 ], missionAnswerCtrl.updateMissionAnswer);
 
-router.delete('/:mission_id', [
+router.delete('/:missionAnswerId', [
   authorize()
 ], missionAnswerCtrl.deleteMissionAnswer);
-
-router.get('/missions', [
-  authorize()
-], missionAnswerCtrl.findMissionFromMissionAnswer);
 
 module.exports = router;

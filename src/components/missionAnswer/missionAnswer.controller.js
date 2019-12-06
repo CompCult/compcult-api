@@ -1,52 +1,36 @@
-var { User } = require('../user/user.model.js');
+var { User, userTypes } = require('../user/user.model.js');
 var Group = require('../group/group.model');
 const GroupMember = require('../groupMember/groupMember.model');
 var Mission = require('../mission/mission.model.js');
 var MissionAnswer = require('./missionAnswer.model.js');
 var Uploads = require('../../upload.js');
+const mongoose = require('mongoose');
 
-const api = module.exports;
+exports.listMissionAnswers = async (req, res) => {
+  const query = {
+    ...req.query,
+    _mission: req.params.missionId
+  };
 
-api.listMissionAnswers = (req, res) => {
-  MissionAnswer.find({}, function (err, missions) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      let promises;
+  if (req.query.type === userTypes.STUDENT) {
+    query._user = req.user.id;
+  }
 
-      try {
-        promises = missions.map(injectMissionData);
-      } catch (err) {
-        res.status(400).send(err);
-      }
+  const missionAnswers = await MissionAnswer.find(query);
+  res.send(missionAnswers);
+};
 
-      Promise.all(promises).then(function (results) {
-        res.status(200).json(results);
-      });
-    }
+exports.getMissionAnswer = async (req, res) => {
+  res.send(req.missionAnswer);
+};
+
+exports.createMissionAnswer = async (req, res) => {
+  const missionAnswer = new MissionAnswer({
+    ...req.body,
+    _user: req.user.id,
+    _mission: req.params.missionId,
   });
-};
 
-api.getMissionAnswer = (req, res) => {
-  res.send(req.mission);
-};
-
-api.findMissionAnswerByParams = (req, res) => {
-  MissionAnswer.find(req.query, function (err, answer) {
-    if (err) {
-      res.status(400).send(err);
-    } else if (!answer) {
-      res.status(404).send('Resposta da missão não encontrada');
-    } else {
-      res.status(200).json(answer);
-    }
-  });
-};
-
-api.createMissionAnswer = async (req, res) => {
-  var missionAnswer = new MissionAnswer();
-  missionAnswer._user = req.body._user;
-  missionAnswer._mission = req.body._mission;
   missionAnswer.status = 'Pendente';
   const date = new Date();
   const timeStamp = date.toLocaleString();
@@ -56,39 +40,34 @@ api.createMissionAnswer = async (req, res) => {
   if (req.body.location_lat) missionAnswer.location_lat = req.body.location_lat;
   if (req.body.location_lng) missionAnswer.location_lng = req.body.location_lng;
   if (req.body.image) {
-    filename = req.body._user.toString() + timeStamp + '.jpg';
+    filename = req.user.id + timeStamp + '.jpg';
 
-    Uploads.uploadFile(req.body.image, req.body._user.toString(), timeStamp);
+    Uploads.uploadFile(req.body.image, req.user.id, timeStamp);
     missionAnswer.image = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   };
   if (req.body.audio) {
-    Uploads.uploadAudio(req.body.audio, req.body._user.toString(), timeStamp);
+    Uploads.uploadAudio(req.body.audio, req.user.id, timeStamp);
 
-    filename = req.body._user.toString() + timeStamp + '.wav';
+    filename = req.user.id + timeStamp + '.wav';
     missionAnswer.audio = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   };
   if (req.body.video) {
-    Uploads.uploadVideo(req.body.video, req.body._user.toString(), timeStamp);
+    Uploads.uploadVideo(req.body.video, req.user.id, timeStamp);
 
-    filename = req.body._user.toString() + timeStamp + '.mp4';
+    filename = req.user.id + timeStamp + '.mp4';
     missionAnswer.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   };
 
-  const mission = await Mission.findById(req.body._mission);
-  mission.users.push(req.body._user);
+  const id = mongoose.Types.ObjectId(req.user.id);
+  const mission = await Mission.findById(req.params.missionId);
+  mission.users.push(id);
   await mission.save();
-
-  missionAnswer.save(function (err) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).send(missionAnswer);
-    }
-  });
+  await missionAnswer.save();
+  res.status(201).send(missionAnswer);
 };
 
-api.updateMissionAnswer = (req, res) => {
-  MissionAnswer.findById(req.params.mission_id, function (err, missionAnswer) {
+exports.updateMissionAnswer = (req, res) => {
+  MissionAnswer.findById(req.params.missionAnswerId, function (err, missionAnswer) {
     if (err) throw err;
 
     const date = new Date();
@@ -123,7 +102,7 @@ api.updateMissionAnswer = (req, res) => {
       if (req.body.status === 'Aprovado') {
         Mission.findById(missionAnswer._mission, async function (err, mission) {
           if (err) throw err;
-          
+
           if (mission.is_grupal) {
             const members = await GroupMember.find({ _group: missionAnswer._group });
             members.map(member => {
@@ -146,42 +125,12 @@ api.updateMissionAnswer = (req, res) => {
   });
 };
 
-api.deleteMissionAnswer = (req, res) => {
-  MissionAnswer.remove({ _id: req.params.mission_id }, function (err) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).send('Missão removida.');
-    }
-  });
+exports.deleteMissionAnswer = async (req, res) => {
+  const missionAnswer = await MissionAnswer.findByIdAndDelete(req.params.missionAnswerId);
+  res.send(missionAnswer);
 };
 
-api.findMissionFromMissionAnswer = (req, res) => {
-  var missionName = req.query.missionname;
-  MissionAnswer.find({ mail: missionName }, function (err, mission) {
-    if (err != null) {
-      console.log(err);
-    }
-    res.json(mission);
-  });
-};
-
-async function injectMissionData (answer) {
-  let string = JSON.stringify(answer);
-  let answerComplete = JSON.parse(string);
-
-  let userobj = await User.findById(answer._user).exec();
-  let missionObj = await Mission.findById(answer._mission).exec();
-  let groupObj = await Group.findById(answer._group).exec();
-
-  answerComplete._user = userobj;
-  answerComplete._group = groupObj;
-  answerComplete._mission = missionObj;
-
-  return answerComplete;
-};
-
-function recompenseUser (userId, points) {
+function recompenseUser(userId, points) {
   User.findById(userId, function (err, user) {
     if (err) throw err;
 
