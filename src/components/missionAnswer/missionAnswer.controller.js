@@ -16,7 +16,9 @@ exports.listMissionAnswers = async (req, res) => {
     query._user = req.user.id;
   }
 
-  const missionAnswers = await MissionAnswer.find(query);
+  const missionAnswers = await MissionAnswer.find(query)
+    .populate({ path: '_user', select: 'name' })
+    .populate({ path: '_mission', select: 'name' });
   res.send(missionAnswers);
 };
 

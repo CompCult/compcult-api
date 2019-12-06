@@ -9,7 +9,7 @@ var MissionAnswer = new Schema({
   },
   _mission: {
     type: ObjectId,
-    ref: './mission.js'
+    ref: 'Mission'
   },
   _group: {
     type: Number,
