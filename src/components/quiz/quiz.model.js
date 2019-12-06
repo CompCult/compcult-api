@@ -2,19 +2,14 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 
-
 const Quiz = new Schema({
-
- 
   _user: {
     type: ObjectId,
     ref: 'User'
   },
-   
   users: {
-  type:[{type: ObjectId, ref: 'User'}]
+    type: [{ type: ObjectId, ref: 'User' }]
   },
-
   title: String,
   description: String,
   points: Number,
@@ -52,7 +47,7 @@ Quiz.virtual('active').get(function () {
     : this.start_time.getTime() <= Date.now();
 });
 
-function generateSecretCode () {
+function generateSecretCode() {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 

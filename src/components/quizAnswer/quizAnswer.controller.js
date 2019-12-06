@@ -13,7 +13,9 @@ exports.listQuizAnswers = async (req, res) => {
     query._user = req.user.id;
   }
 
-  const quizAnswers = await QuizAnswer.find(query);
+  const quizAnswers = await QuizAnswer.find(query)
+    .populate({ path: '_user', select: 'name' })
+    .populate({ path: '_quiz', select: 'title start_time' });
   res.send(quizAnswers);
 };
 
