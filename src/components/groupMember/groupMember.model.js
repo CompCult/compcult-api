@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var GroupMember = new Schema({
-  _id: Number,
   _user: {
     type: mongoose.Types.ObjectId,
     ref: 'User'
