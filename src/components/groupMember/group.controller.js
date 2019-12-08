@@ -14,17 +14,11 @@ api.listGroupMembers = (req, res) => {
   });
 };
 
-api.findGroupMemberById = (req, res) => {
-  GroupMember.find(req.query, async function (err, member) {
-    if (err) {
-      res.status(400).send(err);
-    } else if (!member) {
-      res.status(404).send('Membro não encontrado');
-    } else {
-      const processedMembers = await member.populate({ path: '_user', select: 'name' }).execPopulate();
-      res.status(200).json(processedMembers);
-    }
-  });
+api.findGroupMemberById = async (req, res) => {
+  const members = await GroupMember
+    .find(req.query)
+    .populate({ path: '_user', select: 'name' });
+  res.send(members);
 };
 
 api.findGroupsFromUser = (req, res) => {
