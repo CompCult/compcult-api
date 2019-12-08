@@ -14,17 +14,38 @@ const Mission = new Schema({
   description: String,
   points: Number,
   secret_code: String,
-  is_public: Boolean,
-  is_grupal: Boolean,
+  is_public: {
+    type: Boolean,
+    default: false
+  },
+  is_grupal: {
+    type: Boolean,
+    default: false
+  },
   single_answer: {
     type: Boolean,
     default: true
   },
-  has_image: Boolean,
-  has_audio: Boolean,
-  has_video: Boolean,
-  has_text: Boolean,
-  has_geolocation: Boolean,
+  has_image: {
+    type: Boolean,
+    default: false
+  },
+  has_audio: {
+    type: Boolean,
+    default: false
+  },
+  has_video: {
+    type: Boolean,
+    default: false
+  },
+  has_text: {
+    type: Boolean,
+    default: false
+  },
+  has_geolocation: {
+    type: Boolean,
+    default: false
+  },
   end_message: String,
   start_time: {
     type: Date,
