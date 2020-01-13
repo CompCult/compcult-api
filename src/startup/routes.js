@@ -9,6 +9,7 @@ const reaction = require('../components/reaction/reaction.router.js');
 const appointment = require('../components/appointment/appointment.router.js');
 const appointmentRequest = require('../components/appointmentRequest/appointmentRequest.router.js');
 const places = require('../components/place/place.router');
+const simulations = require('../components/financialSimulator/simulation/simulation.router');
 
 module.exports = app => {
   app.use('/general', general);
@@ -22,4 +23,5 @@ module.exports = app => {
   app.use('/appointment', appointment);
   app.use('/appointment_requests', appointmentRequest);
   app.use('/places', places);
+  app.use('/simulations', simulations);
 };
