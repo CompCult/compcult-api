@@ -21,3 +21,8 @@ exports.createMemory = async (req, res) => {
   await memory.save();
   res.send(memory);
 };
+
+exports.deleteMemory = async (req, res) => {
+  await req.memory.delete();
+  res.send(req.memory);
+};
