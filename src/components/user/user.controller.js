@@ -5,6 +5,7 @@ const { User } = require('./user.model');
 const Uploads = require('../../upload');
 const Mailer = require('../../mailer');
 const utils = require('../../utils');
+const config = require('config');
 
 async function listUsers (req, res) {
   const query = _.omit(req.query, ['page', 'limit']);
@@ -154,7 +155,7 @@ function updateUser (req, res) {
       var filename = req.params.user_id.toString() + timeStamp + '.jpg';
 
       Uploads.uploadFile(req.body.picture, req.params.user_id.toString(), timeStamp);
-      user.picture = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+      user.picture = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
     };
 
     if (req.body.password) {

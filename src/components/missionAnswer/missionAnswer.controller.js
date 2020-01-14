@@ -1,10 +1,10 @@
 var { User, userTypes } = require('../user/user.model.js');
-var Group = require('../group/group.model');
 const GroupMember = require('../groupMember/groupMember.model');
 var Mission = require('../mission/mission.model.js');
 var MissionAnswer = require('./missionAnswer.model.js');
 var Uploads = require('../../upload.js');
 const mongoose = require('mongoose');
+const config = require('config');
 
 exports.listMissionAnswers = async (req, res) => {
   const query = {
@@ -49,19 +49,19 @@ exports.createMissionAnswer = async (req, res) => {
     filename = req.user.id + timeStamp + '.jpg';
 
     Uploads.uploadFile(req.body.image, req.user.id, timeStamp);
-    missionAnswer.image = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+    missionAnswer.image = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
   };
   if (req.body.audio) {
     Uploads.uploadAudio(req.body.audio, req.user.id, timeStamp);
 
     filename = req.user.id + timeStamp + '.wav';
-    missionAnswer.audio = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+    missionAnswer.audio = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
   };
   if (req.body.video) {
     Uploads.uploadVideo(req.body.video, req.user.id, timeStamp);
 
     filename = req.user.id + timeStamp + '.mp4';
-    missionAnswer.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+    missionAnswer.video = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
   };
 
   const id = mongoose.Types.ObjectId(req.user.id);
@@ -86,19 +86,19 @@ exports.updateMissionAnswer = (req, res) => {
       Uploads.uploadFile(req.body.image, req.body._user.toString(), timeStamp);
 
       filename = req.body._user.toString() + timeStamp + '.jpg';
-      missionAnswer.image = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+      missionAnswer.image = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
     };
     if (req.body.audio) {
       Uploads.uploadAudio(req.body.audio, req.body._user.toString(), timeStamp);
 
       filename = req.body._user.toString() + timeStamp + '.wav';
-      missionAnswer.audio = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+      missionAnswer.audio = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
     };
     if (req.body.video) {
       Uploads.uploadVideo(req.body.video, req.body._user.toString(), timeStamp);
 
       filename = req.body._user.toString() + timeStamp + '.mp4';
-      missionAnswer.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+      missionAnswer.video = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
     };
     if (req.body.text_msg) missionAnswer.text_msg = req.body.text_msg;
     if (req.body.location_lat) missionAnswer.location_lat = req.body.location_lat;
@@ -136,7 +136,7 @@ exports.deleteMissionAnswer = async (req, res) => {
   res.send(missionAnswer);
 };
 
-function recompenseUser(userId, points) {
+function recompenseUser (userId, points) {
   User.findById(userId, function (err, user) {
     if (err) throw err;
 

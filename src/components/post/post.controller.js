@@ -1,6 +1,7 @@
 var Post = require('./post.model');
 var User = require('../user/user.model');
 var Uploads = require('../../upload.js');
+const config = require('config');
 
 const api = module.exports;
 
@@ -57,19 +58,19 @@ api.createPost = function (req, res) {
     Uploads.uploadFile(req.body.picture, req.body._user.toString(), timeStamp);
 
     filename = req.body._user.toString() + timeStamp + '.jpg';
-    post.picture = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+    post.picture = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
   }
   if (req.body.audio) {
     Uploads.uploadAudio(req.body.audio, req.body._user.toString(), timeStamp);
 
     filename = req.body._user.toString() + 'audio' + timeStamp + '.wav';
-    post.audio = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+    post.audio = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
   }
   if (req.body.video) {
     Uploads.uploadVideo(req.body.video, req.body._user.toString(), timeStamp);
 
     filename = req.body._user.toString() + timeStamp + '.wav';
-    post.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+    post.video = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
   }
 
   post.save(function (err) {
@@ -94,19 +95,19 @@ api.updatePost = function (req, res) {
         Uploads.uploadFile(req.body.picture, req.body._user.toString(), timeStamp);
 
         filename = req.body._user.toString() + timeStamp + '.jpg';
-        post.picture = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+        post.picture = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
       }
       if (req.body.audio) {
         Uploads.uploadAudio(req.body.audio, req.body._user.toString(), timeStamp);
 
         filename = req.body._user.toString() + timeStamp + '.wav';
-        post.audio = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+        post.audio = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
       }
       if (req.body.video) {
         Uploads.uploadVideo(req.body.video, req.body._user.toString(), timeStamp);
 
         filename = req.body._user.toString() + timeStamp + '.wav';
-        post.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
+        post.video = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
       }
       if (req.body.location_lat) post.location_lat = req.body.location_lat;
       if (req.body.location_lng) post.location_lng = req.body.location_lng;

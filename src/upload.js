@@ -1,15 +1,17 @@
 var AWS = require('aws-sdk');
+const config = require('config');
 
 var s3 = new AWS.S3({
-  accessKeyId: process.env.S3_KEY,
-  secretAccessKey: process.env.S3_SECRET,
-  region: process.env.S3_REGION
+  accessKeyId: config.get('S3_KEY'),
+  secretAccessKey: config.get('S3_SECRET'),
+  region: config.get('S3_REGION')
 });
 
 class Uploads {
   static async uploadFile (file, _user, stamp) {
-    var buffer = Buffer.from(file, 'base64');
-    var filename = process.env.S3_FOLDER + _user + stamp + '.jpg';
+    var buffer = Buffer.from(file.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+    console.log(buffer);
+    var filename = config.get('S3_FOLDER') + _user + stamp + '.jpg';
 
     var params = {
       Bucket: 'compcult',
@@ -25,7 +27,7 @@ class Uploads {
 
   static async uploadAudio (file, _user, stamp) {
     var buffer = Buffer.from(file, 'base64');
-    var filename = process.env.S3_FOLDER + _user + stamp + '.wav';
+    var filename = config.get('S3_FOLDER') + _user + stamp + '.wav';
 
     var params = {
       Bucket: 'compcult',
@@ -44,7 +46,7 @@ class Uploads {
 
   static async uploadVideo (file, _user, stamp) {
     var buffer = Buffer.from(file, 'base64');
-    var filename = process.env.S3_FOLDER + _user + stamp + '.mp4';
+    var filename = config.get('S3_FOLDER') + _user + stamp + '.mp4';
 
     var params = {
       Bucket: 'compcult',

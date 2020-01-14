@@ -1,5 +1,10 @@
 {
     "db": "MONGO_PATH",
     "port": "PORT",
-    "jwtSecret": "JWT_SECRET"
+    "jwtSecret": "JWT_SECRET",
+    "S3_SECRET": "S3_SECRET",
+    "S3_KEY": "S3_KEY",
+    "S3_BUCKET": "S3_BUCKET",
+    "S3_REGION": "S3_REGION",
+    "S3_FOLDER": "S3_FOLDER"
 }
