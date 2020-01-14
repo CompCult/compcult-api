@@ -1,13 +1,29 @@
 const Memory = require('../memory.model');
 const MemoryAnswer = require('./memoryAnswer.model');
-const { User } = require('../../../user/user.model');
+const { User, userTypes } = require('../../../user/user.model');
 const mongoose = require('mongoose');
+
+exports.listMemoryAnswers = async (req, res) => {
+  const query = {
+    ...req.query,
+    _memory: req.params.memoryId
+  };
+
+  if (req.query.type === userTypes.STUDENT) {
+    query._user = req.user.id;
+  }
+
+  const memoryAnswers = await MemoryAnswer.find(query)
+    .populate({ path: '_user', select: 'name' })
+    .populate({ path: '_memory', select: 'name' });
+  res.send(memoryAnswers);
+};
 
 exports.createMemoryAnswer = async (req, res) => {
   const memoryAnswer = new MemoryAnswer({
     ...req.body,
     _user: req.user.id,
-    _quiz: req.params.memoryId
+    _memory: req.params.memoryId
   });
   const userId = mongoose.Types.ObjectId(req.user.id);
   const memory = await Memory.findById(req.params.memoryId);
