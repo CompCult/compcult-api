@@ -5,11 +5,11 @@ const userMiddleware = require('../../user/user.middlewares');
 const memoryMiddleware = require('./memory.middlewares');
 const userModel = require('../../user/user.model');
 const memoryCtrl = require('./memory.controller');
-// const memoryAnswerRouter = require('../memoryAnswer/memoryAnswer.router');
+const memoryAnswerRouter = require('./memoryAnswer/memoryAnswer.router');
 
-// router.use('/:memoryId/answers', memoryAnswerRouter);
+router.use('/:memoryId/answers', memoryAnswerRouter);
 
-// router.get('/', userMiddleware.authorize(), memoryCtrl.listMemories);
+router.get('/', userMiddleware.authorize(), memoryCtrl.listMemories);
 
 // router.get('/:memoryId', [
 //   memoryMiddleware.getMemory

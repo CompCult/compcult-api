@@ -3,6 +3,24 @@ const Uploads = require('../../../upload.js');
 const config = require('config');
 const _ = require('lodash');
 
+exports.listMemories = async (req, res) => {
+  let query = _.omit(req.query, ['answered']);
+
+  // if (Object.keys(req.query).includes('answered')) {
+  //   if (!Number(req.query.answered)) {
+  //     const userId = mongoose.Types.ObjectId(req.user.id);
+  //     query.users = { '$not': { '$all': [userId] } };
+  //   }
+  // }
+
+  const memories = await Memory.find(query);
+  res.send(memories);
+};
+
+exports.getQuiz = (req, res) => {
+  res.send(req.quiz);
+};
+
 exports.createMemory = async (req, res) => {
   const memory = new Memory(_.omit(req.body, 'images'));
   memory._user = req.user.id;
