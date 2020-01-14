@@ -1,5 +1,6 @@
 const Memory = require('../memory.model');
 const MemoryAnswer = require('./memoryAnswer.model');
+const { User } = require('../../../user/user.model');
 const mongoose = require('mongoose');
 
 exports.createMemoryAnswer = async (req, res) => {
@@ -13,5 +14,8 @@ exports.createMemoryAnswer = async (req, res) => {
   memory.users.push(userId);
   await memory.save();
   await memoryAnswer.save();
+
+  await User.findByIdAndUpdate(req.user.id, { $inc: { points: memory.points } });
+
   res.status(201).send(memoryAnswer);
 };
