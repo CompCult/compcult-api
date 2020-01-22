@@ -17,8 +17,8 @@ exports.listMemories = async (req, res) => {
   res.send(memories);
 };
 
-exports.getQuiz = (req, res) => {
-  res.send(req.quiz);
+exports.getMemory = (req, res) => {
+  res.send(req.memory);
 };
 
 exports.createMemory = async (req, res) => {

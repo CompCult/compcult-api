@@ -11,9 +11,9 @@ router.use('/:memoryId/answers', memoryAnswerRouter);
 
 router.get('/', userMiddleware.authorize(), memoryCtrl.listMemories);
 
-// router.get('/:memoryId', [
-//   memoryMiddleware.getMemory
-// ], memoryCtrl.getMemory);
+router.get('/:memoryId', [
+  memoryMiddleware.getMemory
+], memoryCtrl.getMemory);
 
 router.post('/', [
   userMiddleware.authorize(userModel.userTypes.TEACHER)
