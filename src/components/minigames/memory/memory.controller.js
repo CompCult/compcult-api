@@ -30,10 +30,11 @@ exports.createMemory = async (req, res) => {
     const timestamp = Date.now();
 
     await Promise.all(req.body.images.map((image) => {
-      const filename = req.user.id + utils.randomBytes(5) + timestamp + '.jpg';
+      const stamp = utils.randomBytes(5) + timestamp;
+      const filename = req.user.id + stamp + '.jpg';
 
       memory.images.push('https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename);
-      return Uploads.uploadFile(image, req.user.id, utils.randomBytes(5) + timestamp);
+      return Uploads.uploadFile(image, req.user.id, stamp);
     }));
   };
 
