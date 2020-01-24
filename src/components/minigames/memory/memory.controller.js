@@ -1,6 +1,7 @@
 const Memory = require('./memory.model');
 const Uploads = require('../../../upload.js');
 const config = require('config');
+const utils = require('../../../utils');
 const _ = require('lodash');
 
 exports.listMemories = async (req, res) => {
@@ -29,7 +30,7 @@ exports.createMemory = async (req, res) => {
     const timestamp = Date.now();
 
     await Promise.all(req.body.images.map((image) => {
-      const filename = req.user.id + timestamp + '.jpg';
+      const filename = req.user.id + utils.randomBytes(5) + timestamp + '.jpg';
 
       memory.images.push('https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename);
       return Uploads.uploadFile(image, req.user.id, timestamp);

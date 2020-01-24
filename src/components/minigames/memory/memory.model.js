@@ -22,7 +22,7 @@ const Memory = new Schema({
   toObject: { virtuals: true }
 });
 
-function generateSecretCode() {
+function generateSecretCode () {
   var text = '';
   var possible = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz123456789';
 

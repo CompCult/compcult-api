@@ -1,4 +1,6 @@
-function _paginate (page, limit) {
+const crypto = require('crypto');
+
+exports.paginate = (page, limit) => {
   limit = Number(limit) || 0;
   page = Number(page) || 0;
   if (limit && page) {
@@ -9,17 +11,19 @@ function _paginate (page, limit) {
     limit: limit,
     skip: page
   };
-}
+};
 
-function _regexQuery (query, regProps) {
+exports.regexQuery = (query, regProps) => {
   regProps.forEach(prop => {
     query[prop] = { $regex: new RegExp(query[prop]), $options: 'i' };
   });
 
   return query;
-}
+};
 
-module.exports = {
-  paginate: _paginate,
-  regexQuery: _regexQuery
+exports.randomBytes = (len) => {
+  return crypto
+    .randomBytes(Math.ceil(len / 2))
+    .toString('hex')
+    .slice(0, len);
 };
