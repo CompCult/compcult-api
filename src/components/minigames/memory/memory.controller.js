@@ -33,7 +33,7 @@ exports.createMemory = async (req, res) => {
       const filename = req.user.id + utils.randomBytes(5) + timestamp + '.jpg';
 
       memory.images.push('https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename);
-      return Uploads.uploadFile(image, req.user.id, timestamp);
+      return Uploads.uploadFile(image, req.user.id, utils.randomBytes(5) + timestamp);
     }));
   };
 
