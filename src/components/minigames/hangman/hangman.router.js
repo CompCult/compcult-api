@@ -5,9 +5,9 @@ const userMiddleware = require('../../user/user.middlewares');
 const hangmanMiddleware = require('./hangman.middlewares');
 const userModel = require('../../user/user.model');
 const hangmanCtrl = require('./hangman.controller');
-// const hangmanAnswerRouter = require('./hangmanAnswer/hangmanAnswer.router');
+const hangmanAnswerRouter = require('./hangmanAnswer/hangmanAnswer.router');
 
-// router.use('/:hangmanId/answers', hangmanAnswerRouter);
+router.use('/:hangmanId/answers', hangmanAnswerRouter);
 
 router.get('/', userMiddleware.authorize(), hangmanCtrl.listHangmans);
 
