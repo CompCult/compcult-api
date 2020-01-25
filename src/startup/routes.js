@@ -11,6 +11,7 @@ const appointmentRequest = require('../components/appointmentRequest/appointment
 const places = require('../components/place/place.router');
 const simulations = require('../components/financialSimulator/simulation/simulation.router');
 const memories = require('../components/minigames/memory/memory.router');
+const hangmans = require('../components/minigames/hangman/hangman.router');
 
 module.exports = app => {
   app.use('/general', general);
@@ -26,4 +27,5 @@ module.exports = app => {
   app.use('/places', places);
   app.use('/simulations', simulations);
   app.use('/minigames/memories', memories);
+  app.use('/minigames/hangmans', hangmans);
 };
