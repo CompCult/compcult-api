@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 
-const { User } = require('./user.model');
+const { User, userTypes } = require('./user.model');
 const Uploads = require('../../upload');
 const Mailer = require('../../mailer');
 const utils = require('../../utils');
@@ -125,6 +125,14 @@ function updateUser (req, res) {
 
     if (!user) {
       res.status(400).send('Usuário não encontrado!');
+    }
+
+    if(req.body.can_edit != null){
+      if(req.user.type == userTypes.MANAGER){
+        user.can_edit = req.body.can_edit;
+      } else {
+        res.status(401).send('Apenas gerentes podem alterar as permissões dos usuários!');
+      }
     }
 
     if (req.body.name) user.name = req.body.name;

@@ -19,17 +19,17 @@ router.get('/public', missionCtrl.findPublicMissions);
 router.get('/private', missionCtrl.findPrivateMission);
 
 router.post('/', [
-  userMiddleware.authorize(userModel.userTypes.TEACHER)
+  userMiddleware.authorize(userModel.userTypes.TEACHER, true),
 ], missionCtrl.createMission);
 
 router.put('/:missionId', [
-  userMiddleware.authorize(userModel.userTypes.TEACHER),
+  userMiddleware.authorize(userModel.userTypes.TEACHER, true),
   missionMiddlewares.getMission,
   missionMiddlewares.isOwner
 ], missionCtrl.updateMission);
 
 router.delete('/:missionId', [
-  userMiddleware.authorize(userModel.userTypes.TEACHER),
+  userMiddleware.authorize(userModel.userTypes.TEACHER, true),
   missionMiddlewares.getMission,
   missionMiddlewares.isOwner
 ], missionCtrl.deleteMission);

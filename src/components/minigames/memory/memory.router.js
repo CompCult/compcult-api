@@ -16,12 +16,12 @@ router.get('/:memoryId', [
 ], memoryCtrl.getMemory);
 
 router.post('/', [
-  userMiddleware.authorize(userModel.userTypes.TEACHER)
+  userMiddleware.authorize(userModel.userTypes.TEACHER, true)
 ], memoryCtrl.createMemory);
 
 router.delete('/:memoryId', [
   memoryMiddleware.getMemory,
-  userMiddleware.authorize(userModel.userTypes.TEACHER),
+  userMiddleware.authorize(userModel.userTypes.TEACHER, true),
   memoryMiddleware.isOwner
 ], memoryCtrl.deleteMemory);
 

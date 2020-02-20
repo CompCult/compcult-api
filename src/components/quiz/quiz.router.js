@@ -18,18 +18,18 @@ router.get('/:quizId', [
 ], quizCtrl.getQuiz);
 
 router.post('/', [
-  userMiddleware.authorize(userModel.userTypes.TEACHER)
+  userMiddleware.authorize(userModel.userTypes.TEACHER, true)
 ], quizCtrl.createQuizz);
 
 router.put('/:quizId', [
   quizMiddleware.getQuiz,
-  userMiddleware.authorize(userModel.userTypes.TEACHER),
+  userMiddleware.authorize(userModel.userTypes.TEACHER, true),
   quizMiddleware.isOwner
 ], quizCtrl.updateQuiz);
 
 router.delete('/:quizId', [
   quizMiddleware.getQuiz,
-  userMiddleware.authorize(userModel.userTypes.TEACHER),
+  userMiddleware.authorize(userModel.userTypes.TEACHER, true),
   quizMiddleware.isOwner
 ], quizCtrl.deleteQuiz);
 

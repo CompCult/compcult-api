@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  can_edit: {
+    type: Boolean,
+    default: false
+  },
   new_password: String,
   birth: Date,
   sex: String,
