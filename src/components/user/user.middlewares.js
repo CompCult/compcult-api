@@ -22,16 +22,11 @@ api.authorize = (authorizationLevel, verifyEditPermission) => async (req, res, n
     return res.status(401).send('You do not have the permission level required to access this feature.');
   }
 
-  if(verifyEditPermission && req.user.type != userTypes.MANAGER){
-    User.findById(req.user.id, function (err, usuario) {
-      if(usuario){
-        if(!usuario.can_edit) 
-          return res.status(401).send('You do not have the permission level required to access this feature.');
-      }
-    });
-    
+  if (verifyEditPermission && req.user.type != userTypes.MANAGER){
+    const user = await User.findById(req.user.id);
+    if(user && !user.can_edit) return res.status(401).send('You do not have the permission level required to access this feature.');
   }
-
+  
   next();
 };
 
