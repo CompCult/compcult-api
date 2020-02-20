@@ -16,17 +16,17 @@ router.get('/:hangmanId', [
 ], hangmanCtrl.getHangman);
 
 router.post('/', [
-  userMiddleware.authorize(userModel.userTypes.TEACHER)
+  userMiddleware.authorize(userModel.userTypes.TEACHER, true)
 ], hangmanCtrl.createHangman);
 
 router.put('/:hangmanId', [
-  userMiddleware.authorize(userModel.userTypes.TEACHER),
+  userMiddleware.authorize(userModel.userTypes.TEACHER, true),
   hangmanMiddleware.getHangman
 ], hangmanCtrl.updateHangman);
 
 router.delete('/:hangmanId', [
   hangmanMiddleware.getHangman,
-  userMiddleware.authorize(userModel.userTypes.TEACHER),
+  userMiddleware.authorize(userModel.userTypes.TEACHER, true),
   hangmanMiddleware.isOwner
 ], hangmanCtrl.deleteHangman);
 

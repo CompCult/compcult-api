@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 const config = require('config');
-const { userTypes } = require('./user.model');
+const { User, userTypes } = require('./user.model');
 
 const api = module.exports;
 
-api.authorize = (authorizationLevel) => async (req, res, next) => {
+api.authorize = (authorizationLevel, verifyEditPermission) => async (req, res, next) => {
   let token = req.header('Authorization');
 
   if (!token) return res.status(401).send('Access denied. No token provided.');
@@ -20,6 +20,16 @@ api.authorize = (authorizationLevel) => async (req, res, next) => {
 
   if (authorizationLevel && !checkAuthorizationLevel(authorizationLevel, req.user.type)) {
     return res.status(401).send('You do not have the permission level required to access this feature.');
+  }
+
+  if(verifyEditPermission && req.user.type != userTypes.MANAGER){
+    User.findById(req.user.id, function (err, usuario) {
+      if(usuario){
+        if(!usuario.can_edit) 
+          return res.status(401).send('You do not have the permission level required to access this feature.');
+      }
+    });
+    
   }
 
   next();
@@ -38,7 +48,5 @@ function checkAuthorizationLevel (authorizationLevel, userType) {
     case userTypes.STUDENT:
       result = userType === userTypes.MANAGER || userType === userTypes.STUDENT;
   }
-
-  console.log(result);
   return result;
 }
