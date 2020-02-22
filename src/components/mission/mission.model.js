@@ -12,7 +12,8 @@ const Mission = new Schema({
     type: [{ type: ObjectId, ref: 'User' }]
   },
   description: String,
-  points: Number,
+  lux: Number,
+  resources: Number,
   secret_code: String,
   is_public: {
     type: Boolean,

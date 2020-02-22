@@ -54,19 +54,20 @@ async function verifyAnswer(quizId, answer) {
   let quiz = await Quiz.findById(quizId);
 
   if (quiz.correct_answer && quiz.correct_answer === answer) {
-    recompenseUser(answer._user, quiz.points);
+    recompenseUser(answer._user, quiz.lux, quiz.resources);
     return true;
   } else if (quiz.correct_answer && quiz.correct_answer !== answer.answer) {
     return false;
   }
 };
 
-function recompenseUser(userId, points) {
+function recompenseUser(userId, lux, resources) {
   User.findById(userId, function (err, user) {
     if (err) throw err;
 
     if (user) {
-      user.points += points;
+      user.lux += lux;
+      user.resources += resources;
       user.save(function (err) {
         if (err) throw err;
       });

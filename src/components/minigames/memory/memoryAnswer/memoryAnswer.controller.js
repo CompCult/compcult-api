@@ -31,7 +31,7 @@ exports.createMemoryAnswer = async (req, res) => {
   await memory.save();
   await memoryAnswer.save();
 
-  await User.findByIdAndUpdate(req.user.id, { $inc: { points: memory.points } });
+  await User.findByIdAndUpdate(req.user.id, { $inc: { lux: memory.lux, resources: memory.resources} });
 
   res.status(201).send(memoryAnswer);
 };

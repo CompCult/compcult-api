@@ -19,6 +19,15 @@ var MissionAnswer = new Schema({
     type: String,
     enum: ['Aprovado', 'Rejeitado', 'Pendente']
   },
+  imp: {
+    type: Number,
+    default: 0
+  },
+
+  people: {
+    type: Number,
+    default: 0
+  },
   image: String,
   audio: String,
   video: String,

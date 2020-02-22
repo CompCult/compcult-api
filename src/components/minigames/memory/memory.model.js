@@ -12,7 +12,8 @@ const Memory = new Schema({
   },
   title: String,
   description: String,
-  points: Number,
+  lux: Number,
+  resources: Number,
   secret_code: { type: String, default: generateSecretCode },
   is_public: Boolean,
   images: [String]

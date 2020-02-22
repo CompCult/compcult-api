@@ -12,7 +12,8 @@ const Quiz = new Schema({
   },
   title: String,
   description: String,
-  points: Number,
+  lux: Number,
+  resources: Number,
   secret_code: { type: String, default: generateSecretCode },
   is_public: Boolean,
   single_answer: {

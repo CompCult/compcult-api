@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema({
   city: String,
   state: String,
   zipcode: String,
-  points: {
+  lux: {
     type: Number,
     default: 0
   },
@@ -57,6 +57,22 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+
+  resources: {
+    type: Number,
+    default: 0
+  },
+
+  imp: {
+    type: Number,
+    default: 0
+  },
+
+  people: {
+    type: Number,
+    default: 0
+  },
+  
   request_limit: {
     type: Number,
     default: 5
