@@ -21,12 +21,14 @@ var MissionAnswer = new Schema({
   },
   imp: {
     type: Number,
-    default: 0
+    default: 0, 
+    min: 0
   },
 
   people: {
     type: Number,
-    default: 0
+    default: 0,
+    min: 0
   },
   image: String,
   audio: String,

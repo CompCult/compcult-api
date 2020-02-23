@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
+var { User, userTypes } = require('../user/user.model.js');
 
 const Mission = new Schema({
   name: String,
@@ -11,9 +12,24 @@ const Mission = new Schema({
   users: {
     type: [{ type: ObjectId, ref: 'User' }]
   },
+  accountableTeacher: {
+    type: ObjectId,
+    ref: 'User',
+    //User.type = userTypes.TEACHER,
+    filter: (User) => User.type === userTypes.TEACHER,
+  },
+
   description: String,
-  lux: Number,
-  resources: Number,
+  lux: {
+    type: Number,
+    min: 0,
+    default: 0
+  },
+  resources: {
+    type: Number,
+    min: 0,
+    default: 0
+  },
   secret_code: String,
   is_public: {
     type: Boolean,

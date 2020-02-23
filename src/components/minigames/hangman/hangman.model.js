@@ -13,8 +13,16 @@ const Hangman = new Schema({
   },
   title: String,
   description: String,
-  lux: Number,
-  resources: Number,
+  lux: {
+    type: Number,
+    min: 0,
+    default: 0
+  },
+  resources: {
+    type: Number,
+    min: 0,
+    default: 0
+  },
   secret_code: { type: String, default: utils.randomBytes(6) },
   is_public: Boolean
 }, {
