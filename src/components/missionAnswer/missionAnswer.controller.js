@@ -112,10 +112,10 @@ exports.updateMissionAnswer = (req, res) => {
           if (mission.is_grupal) {
             const members = await GroupMember.find({ _group: missionAnswer._group });
             members.map(member => {
-              recompenseUser(member._user, mission.points);
+              recompenseUser(member._user, mission.lux, mission.resources, missionAnswer.imp, missionAnswer.people);
             });
           } else {
-            recompenseUser(missionAnswer._user, mission.points);
+            recompenseUser(member._user, mission.lux, mission.resources, missionAnswer.imp, missionAnswer.people);
           }
         });
       }
@@ -136,12 +136,16 @@ exports.deleteMissionAnswer = async (req, res) => {
   res.send(missionAnswer);
 };
 
-function recompenseUser (userId, points) {
+
+function recompenseUser (userId, lux, resources, impact, people) {
   User.findById(userId, function (err, user) {
     if (err) throw err;
 
     if (user) {
-      user.points += points;
+      user.lux += lux;
+      user.resources += resources;
+      user.imp += impact;
+      user.people += people;
       user.save(function (err) {
         if (err) throw err;
 

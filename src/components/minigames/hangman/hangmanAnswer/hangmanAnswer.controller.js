@@ -32,7 +32,7 @@ exports.createHangmanAnswer = async (req, res) => {
     hangman.users.push(userId);
     await hangman.save();
     await hangmanAnswer.save();
-    await User.findByIdAndUpdate(req.user.id, { $inc: { points: hangman.points } });
+    await User.findByIdAndUpdate(req.user.id, { $inc: { lux: hangman.lux, resources: hangman.resources } });
     res.status(201).send(hangmanAnswer);
   }
 
