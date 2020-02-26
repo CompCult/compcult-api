@@ -9,7 +9,7 @@ const { userTypes } = require('./user.model');
 
 router.get('/', userMiddleware.authorize(), userController.listUsers);
 
-router.get('/:user_id', userMiddleware.authorize(), userController.findUserById);
+router.get('/:user_id',  userController.findUserById);
 
 router.get('/query/fields', userMiddleware.authorize(userTypes.TEACHER), userController.listUsers);
 
