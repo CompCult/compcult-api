@@ -109,13 +109,16 @@ exports.updateMissionAnswer = (req, res) => {
         Mission.findById(missionAnswer._mission, async function (err, mission) {
           if (err) throw err;
 
+          missionAnswer.imp = req.body.imp || 0;
+          missionAnswer.people = req.body.people || 0;
+
           if (mission.is_grupal) {
             const members = await GroupMember.find({ _group: missionAnswer._group });
             members.map(member => {
               recompenseUser(member._user, mission.lux, mission.resources, missionAnswer.imp, missionAnswer.people);
             });
           } else {
-            recompenseUser(member._user, mission.lux, mission.resources, missionAnswer.imp, missionAnswer.people);
+            recompenseUser(missionAnswer._user, mission.lux, mission.resources, missionAnswer.imp, missionAnswer.people);
           }
         });
       }
