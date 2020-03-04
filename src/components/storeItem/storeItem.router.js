@@ -5,6 +5,9 @@ const userMiddleware = require('../user/user.middlewares');
 const userModel = require('../user/user.model');
 const storeCtrl = require('./storeItem.controller');
 const storeMiddleware = require('./storeItem.middlewares');
+const orderRoutes = require('../storeOrder/storeOrder.router');
+
+router.use('/:itemId/orders', storeMiddleware.getItem, orderRoutes);
 
 router.get('/', userMiddleware.authorize(), storeCtrl.listItems);
 

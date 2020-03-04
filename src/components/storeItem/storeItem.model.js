@@ -7,6 +7,9 @@ const StoreItem = new Schema({
     type: ObjectId,
     ref: 'User'
   },
+  users: {
+    type: [{ type: ObjectId, ref: 'User' }]
+  },
   title: String,
   description: String,
   quantity: {
@@ -17,7 +20,7 @@ const StoreItem = new Schema({
     type: Number,
     required: true
   },
-  photoUrl: String,
+  image: String,
   start_time: {
     type: Date,
     default: Date.now
