@@ -2,6 +2,7 @@ const StoreItem = require('./storeItem.model');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 var Uploads = require('../../upload.js');
+const config = require('config');
 
 exports.listItems = async (req, res) => {
   let query = _.omit(req.query, ['active', 'purchased', 'owner']);
