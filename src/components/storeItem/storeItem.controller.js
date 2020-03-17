@@ -63,6 +63,8 @@ exports.createItem = async (req, res) => {
 exports.updateItem = async (req, res) => {
   req.item.set(req.body);
   if (req.body.image) {
+    const date = new Date();
+    const timeStamp = date.toLocaleString();
     filename = req.user.id + timeStamp + '.jpg';
 
     Uploads.uploadFile(req.body.image, req.user.id, timeStamp);
