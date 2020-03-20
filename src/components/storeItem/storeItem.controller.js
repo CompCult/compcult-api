@@ -68,7 +68,7 @@ exports.updateItem = async (req, res) => {
     filename = req.user.id + timeStamp + '.jpg';
 
     Uploads.uploadFile(req.body.image, req.user.id, timeStamp);
-    item.image = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
+    req.item.image = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
   };
   await req.item.save();
 
