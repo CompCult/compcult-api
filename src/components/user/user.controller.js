@@ -7,7 +7,7 @@ const Mailer = require('../../mailer');
 const utils = require('../../utils');
 const config = require('config');
 
-async function listUsers (req, res) {
+async function listUsers(req, res) {
   const query = _.omit(req.query, ['page', 'limit']);
   const regexProperties = ['name'];
   const regexQuery = utils.regexQuery(query, regexProperties);
@@ -27,7 +27,7 @@ async function listUsers (req, res) {
   }
 }
 
-function findUserById (req, res) {
+function findUserById(req, res) {
   User.findById(req.params.user_id, function (err, usuario) {
     if (err) {
       res.status(400).send(err);
@@ -39,7 +39,7 @@ function findUserById (req, res) {
   });
 }
 
-async function createUser (req, res, next) {
+async function createUser(req, res, next) {
   req.body.password = await bcrypt.hash(req.body.password, 10);
   const user = new User(req.body);
 
@@ -55,7 +55,7 @@ async function createUser (req, res, next) {
   }
 }
 
-function updatePassword (req, res) {
+function updatePassword(req, res) {
   User.findOne({ email: req.query.email }, function (err, user) {
     if (err) {
       res.status(400).send(err);
@@ -80,7 +80,7 @@ function updatePassword (req, res) {
   });
 }
 
-function recoveryPassword (req, res) {
+function recoveryPassword(req, res) {
   let userEmail = req.body.email;
   let html = "<div style='width:90%; margin-left:auto; margin-right:auto; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px;'>" +
     "<div style='font-family: Arial; border-color: #502274;'>" +
@@ -119,7 +119,7 @@ function recoveryPassword (req, res) {
   });
 }
 
-function updateUser (req, res) {
+function updateUser(req, res) {
   User.findById(req.params.user_id, function (err, user) {
     if (err) throw err;
 
@@ -127,8 +127,8 @@ function updateUser (req, res) {
       res.status(400).send('Usuário não encontrado!');
     }
 
-    if(req.body.can_edit != null){
-      if(req.user.type == userTypes.MANAGER){
+    if (req.body.can_edit != null) {
+      if (req.user.type == userTypes.MANAGER) {
         user.can_edit = req.body.can_edit;
       } else {
         res.status(401).send('Apenas gerentes podem alterar as permissões dos usuários!');
@@ -194,15 +194,19 @@ function updateUser (req, res) {
   });
 }
 
-async function authenticate (req, res) {
+async function authenticate(req, res) {
   const user = await User.findOne({ 'email': req.body.email });
 
   if (!user) {
     return res.status(404).send('Usuário não encontrado.');
-  } else if (_userIsBanned(user.banned_until)) {
+  }
+
+  if (_userIsBanned(user.banned_until)) {
     return res.status(400).send('Usuário banido até ' + user.banned_until.toLocaleString());
-  } else if (!user.comparePassword(req.body.password)) {
-    res.status(401).json('Senha incorreta.');
+  }
+
+  if (! await user.comparePassword(req.body.password)) {
+    return res.status(401).json('Senha incorreta.');
   }
 
   res.send({
@@ -216,7 +220,7 @@ const refreshToken = async (req, res) => {
   res.send(user.generateToken());
 };
 
-function deleteUser (req, res) {
+function deleteUser(req, res) {
   User.remove({ _id: req.params.user_id }, function (err) {
     if (err) {
       res.status(400).send(err);
@@ -226,7 +230,7 @@ function deleteUser (req, res) {
   });
 }
 
-function _userIsBanned (date) {
+function _userIsBanned(date) {
   if (date) {
     const now = new Date();
     if (date.getTime() > now.getTime()) {
