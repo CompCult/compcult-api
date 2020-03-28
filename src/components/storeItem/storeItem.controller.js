@@ -5,10 +5,10 @@ var Uploads = require('../../upload.js');
 const config = require('config');
 
 exports.listItems = async (req, res) => {
-  let query = _.omit(req.query, ['active', 'purchased', 'owner']);
+  let query = _.omit(req.query, ['active', 'purchased', 'owner', 'page', 'limit']);
 
   if (Object.keys(req.query).includes('active')) {
-    
+
     if (Number(req.query.active)) {
       query.start_time = { '$lte': new Date() };
       query.$or = [{ end_time: null }, { end_time: { '$gte': new Date() } }];
@@ -17,7 +17,7 @@ exports.listItems = async (req, res) => {
         { start_time: { '$gt': Date.now() } },
         { end_time: { '$lt': Date.now() } }
       ];
-    } 
+    }
   }
 
   if (Object.keys(req.query).includes('purchased')) {
@@ -25,16 +25,29 @@ exports.listItems = async (req, res) => {
     if (Number(req.query.purchased)) {
       query.users = { '$all': [userId] };
     } else {
-      query.users = { '$not':{'$all': [userId] }};
+      query.users = { '$not': { '$all': [userId] } };
     }
   }
 
   if (Object.keys(req.query).includes('owner')) {
-    query._user = Number(req.query.owner) ? req.user.id : {'$ne': req.user.id};
+    query._user = Number(req.query.owner) ? req.user.id : { '$ne': req.user.id };
   }
 
-  const items = await StoreItem.find(query);
-  res.send(items);
+  if (req.query.page) {
+    if (!req.query.limit) res.status(400).send('A page parameter was passed without limit');
+
+    const config = {
+      page: Number(req.query.page),
+      limit: Number(req.query.limit)
+    };
+    console.log(config);
+    const items = await StoreItem.paginate(query, config);
+    res.send(items);
+
+  } else {
+    const items = await StoreItem.find(query);
+    res.send(items);
+  }
 };
 
 exports.getItem = (req, res) => {
@@ -43,8 +56,8 @@ exports.getItem = (req, res) => {
 
 exports.createItem = async (req, res) => {
 
-  if(!req.body.value) return res.status(400).send('Value is a required field!');
-  
+  if (!req.body.value) return res.status(400).send('Value is a required field!');
+
   const item = new StoreItem(req.body);
   item._user = req.user.id;
   if (req.body.image) {

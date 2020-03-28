@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -13,8 +14,8 @@ const StoreItem = new Schema({
   title: String,
   description: String,
   quantity: {
-      type: Number,
-      default: 0
+    type: Number,
+    default: 0
   },
   value: {
     type: Number,
@@ -36,6 +37,8 @@ const StoreItem = new Schema({
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
+
+StoreItem.plugin(mongoosePaginate);
 
 StoreItem.virtual('active').get(function () {
   return this.end_time
