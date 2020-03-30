@@ -1,14 +1,15 @@
 var nodeMailer = require('nodemailer');
+const config = require('config');
 
 class Mailer {
-  static sendMail (email, subject, message) {
+  static sendMail(email, subject, message) {
     var transporter = nodeMailer.createTransport({
       host: 'smtp.gmail.com',
       port: 465,
       secure: true,
       auth: {
-        user: process.env.MAILER_MAIL,
-        pass: process.env.MAILER_PASS
+        user: config.get('MAILER_MAIL'),
+        pass: config.get('MAILER_PASS')
       },
       tls: {
         // do not fail on invalid certs
@@ -17,7 +18,7 @@ class Mailer {
     });
 
     var mailOptions = {
-      from: process.env.MAIL_SENDER + ' <ufcgcompcult@gmail.com>', // sender address
+      from: config.get('MAIL_SENDER') + ' <ufcgcompcult@gmail.com>', // sender address
       to: email, // list of receivers
       subject: subject, // Subject line
       text: message, // plaintext body
