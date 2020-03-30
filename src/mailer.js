@@ -17,6 +17,9 @@ class Mailer {
       }
     });
 
+    console.log(config.get('MAILER_MAIL'));
+
+
     var mailOptions = {
       from: config.get('MAIL_SENDER') + ' <ufcgcompcult@gmail.com>', // sender address
       to: email, // list of receivers
