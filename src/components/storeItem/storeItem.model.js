@@ -17,6 +17,14 @@ const StoreItem = new Schema({
     type: Number,
     default: 0
   },
+  isCreatedByMission: {
+    type: Boolean,
+    default: false
+  },
+  missionId: {
+    type: ObjectId,
+    ref: 'Mission'
+  },
   value: {
     type: Number,
     required: true
@@ -29,6 +37,27 @@ const StoreItem = new Schema({
   end_time: {
     type: Date
   },
+  has_image: {
+    type: Boolean,
+    default: false
+  },
+  has_audio: {
+    type: Boolean,
+    default: false
+  },
+  has_video: {
+    type: Boolean,
+    default: false
+  },
+  has_text: {
+    type: Boolean,
+    default: false
+  },
+
+  image: String,
+  audio: String,
+  video: String,
+  text: String,
   created_at: {
     type: Date,
     default: Date.now
