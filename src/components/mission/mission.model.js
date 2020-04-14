@@ -18,6 +18,10 @@ const Mission = new Schema({
     //User.type = userTypes.TEACHER,
     filter: (User) => User.type === userTypes.TEACHER,
   },
+  isEntrepreneurial: {
+    type: Boolean,
+    default: false
+  },
 
   description: String,
   lux: {

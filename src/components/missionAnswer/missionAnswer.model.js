@@ -21,7 +21,7 @@ var MissionAnswer = new Schema({
   },
   imp: {
     type: Number,
-    default: 0, 
+    default: 0,
     min: 0
   },
 
@@ -30,6 +30,10 @@ var MissionAnswer = new Schema({
     default: 0,
     min: 0
   },
+
+  value: Number,
+  title: String,
+
   image: String,
   audio: String,
   video: String,

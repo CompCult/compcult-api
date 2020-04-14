@@ -2,6 +2,7 @@ var { User, userTypes } = require('../user/user.model.js');
 const GroupMember = require('../groupMember/groupMember.model');
 var Mission = require('../mission/mission.model.js');
 var MissionAnswer = require('./missionAnswer.model.js');
+var StoreItem = require('../storeItem/storeItem.model');
 var Uploads = require('../../upload.js');
 const mongoose = require('mongoose');
 const config = require('config');
@@ -31,11 +32,21 @@ exports.getMissionAnswer = async (req, res) => {
 };
 
 exports.createMissionAnswer = async (req, res) => {
+
+  const mission = await Mission.findById(req.params.missionId);
+  if (!mission) res.status(404).send('Mission not found');
+
   const missionAnswer = new MissionAnswer({
     ...req.body,
     _user: req.user.id,
     _mission: req.params.missionId,
   });
+
+  if (mission.isEntrepreneurial) {
+    if (!req.body.title || !req.body.value) return res.status(404).send('required fields: value and title');
+    missionAnswer.value = req.body.value;
+    missionAnswer.title = req.body.title;
+  }
 
   missionAnswer.status = 'Pendente';
   const date = new Date();
@@ -65,7 +76,6 @@ exports.createMissionAnswer = async (req, res) => {
   };
 
   const id = mongoose.Types.ObjectId(req.user.id);
-  const mission = await Mission.findById(req.params.missionId);
   mission.users.push(id);
   await mission.save();
   await missionAnswer.save();
@@ -112,6 +122,27 @@ exports.updateMissionAnswer = (req, res) => {
           missionAnswer.imp = req.body.imp || 0;
           missionAnswer.people = req.body.people || 0;
 
+          if (mission.isEntrepreneurial) {
+            var item = new StoreItem({
+              _user: missionAnswer._user,
+              title: missionAnswer.title,
+              value: missionAnswer.value,
+              isCreatedByMission: true,
+              missionId: mission.id,
+              image: missionAnswer.image,
+              video: missionAnswer.video,
+              text: missionAnswer.text_msg,
+              audio: missionAnswer.audio,
+              has_image: mission.has_image,
+              has_video: mission.has_video,
+              has_audio: mission.has_audio,
+              has_text: mission.has_text
+            });
+
+            await item.save();
+
+          }
+
           if (mission.is_grupal) {
             const members = await GroupMember.find({ _group: missionAnswer._group });
             members.map(member => {
@@ -140,7 +171,7 @@ exports.deleteMissionAnswer = async (req, res) => {
 };
 
 
-function recompenseUser (userId, lux, resources, impact, people) {
+function recompenseUser(userId, lux, resources, impact, people) {
   User.findById(userId, function (err, user) {
     if (err) throw err;
 
@@ -157,3 +188,4 @@ function recompenseUser (userId, lux, resources, impact, people) {
     }
   });
 };
+

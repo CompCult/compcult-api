@@ -21,29 +21,51 @@ exports.createOrder = async (req, res) => {
   order._user = req.user.id;
   order._item = req.item.id;
 
-  if (req.item.users.includes(req.user.id))
-    return res.status(409).send('User has already purchased this item!');
-
-  if (req.item.quantity * order.quantity <= 0)
-    return res.status(409).send('Insufficient item quantity!');
-
   const user = await User.findById(req.user.id);
-
-  console.log(user.resources);
 
   if (user.resources < req.item.value * order.quantity)
     return res.status(409).send('Insufficient user resources');
 
-  user.resources -= req.item.value * order.quantity;
-  req.item.quantity -= order.quantity;
-  req.item.users.push(user.id);
+  if (req.item.isCreatedByMission) {
+
+    if (req.item._user == req.user.id)
+      return res.status(409).send('User owns the item!');
+
+    const buyer = await User.findById(req.user.id);
+    const owner = await User.findById(req.item._user);
+
+    buyer.resources -= req.item.value * order.quantity;
+    owner.resources += req.item.value * order.quantity;
+
+    req.item.quantity += order.quantity;
+    req.item.users.push(buyer.id);
+
+    await buyer.save();
+    await owner.save();
+    await req.item.save();
+    res.status(200).send();
+
+  } else {
+
+    if (req.item.users.includes(req.user.id))
+      return res.status(409).send('User has already purchased this item!');
+
+    if (req.item.quantity * order.quantity <= 0)
+      return res.status(409).send('Insufficient item quantity!');
 
 
 
-  await order.save();
-  await user.save();
-  await req.item.save();
-  res.send(order);
+    user.resources -= req.item.value * order.quantity;
+    req.item.quantity -= order.quantity;
+    req.item.users.push(user.id);
+
+    await order.save();
+    await user.save();
+    await req.item.save();
+    res.send(order);
+
+  }
+
 };
 
 exports.updateOrder = async (req, res) => {
