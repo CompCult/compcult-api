@@ -11,13 +11,13 @@ const config = require('config');
 exports.georeferencedanswers = async (req, res) => {
   const query = {
     location_lat: { $exists: true, $ne: null },
-    location_lng: { $exists: true, $ne: null }
+    location_lng: { $exists: true, $ne: null },
   };
 
   const missionAnswers = await MissionAnswer.find(query)
     .populate({ path: '_user', select: ['_id', 'name', 'email'] })
     .populate({ path: '_mission', select: ['_id', 'name', 'description', '_user', 'lux', 'resources', 'secret_code'] });
-  res.send(missionAnswers);
+  res.send(missionAnswers.filter(missionAnswer => missionAnswer._mission != null && missionAnswer._user != null));
 };
 
 exports.listMissionAnswers = async (req, res) => {
