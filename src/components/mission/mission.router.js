@@ -5,8 +5,10 @@ const userModel = require('../user/user.model');
 const missionCtrl = require('./mission.controller');
 const missionMiddlewares = require('./mission.middlewares');
 const missionAnswerRouter = require('../missionAnswer/missionAnswer.router');
+const missionAnswerCtrl = require('../missionAnswer/missionAnswer.controller');
 
 router.use('/:missionId/answers', userMiddleware.authorize(), missionAnswerRouter);
+router.get('/georeferencedanswers', userMiddleware.authorize(userModel.userTypes.TEACHER, false), missionAnswerCtrl.georeferencedanswers);
 
 router.get('/', userMiddleware.authorize(), missionCtrl.listMissions);
 
