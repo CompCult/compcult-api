@@ -29,7 +29,7 @@ exports.createQuizAnswer = async (req, res) => {
     _user: req.user.id,
     _quiz: req.params.quizId,
 
-    approved: await verifyAnswer(req.params.quizId, req.body.answer)
+    approved: await verifyAnswer(req.params.quizId, req.body.answer, req.user.id)
 
   });
   const id = mongoose.Types.ObjectId(req.user.id);
@@ -50,11 +50,11 @@ exports.deleteQuizAnswer = async (req, res) => {
   res.send(req.quizAnswer);
 };
 
-async function verifyAnswer(quizId, answer) {
+async function verifyAnswer(quizId, answer, userId) {
   let quiz = await Quiz.findById(quizId);
 
   if (quiz.correct_answer && quiz.correct_answer === answer) {
-    recompenseUser(answer._user, quiz.lux, quiz.resources);
+    recompenseUser(userId, quiz.lux, quiz.resources);
     return true;
   } else if (quiz.correct_answer && quiz.correct_answer !== answer.answer) {
     return false;
