@@ -43,6 +43,15 @@ async function createUser(req, res, next) {
   req.body.password = await bcrypt.hash(req.body.password, 10);
   const user = new User(req.body);
 
+  if (req.body.picture) {
+    var date = new Date();
+    var timeStamp = date.toLocaleString();
+    var filename = user._id.toString() + timeStamp + '.jpg';
+
+    Uploads.uploadFile(req.body.picture, user._id.toString(), timeStamp);
+    user.picture = 'https://s3.amazonaws.com/compcult/' + config.get('S3_FOLDER') + filename;
+  };
+
   try {
     await user.save();
     res.status(200).send(_.omit(user.toJSON(), 'password'));

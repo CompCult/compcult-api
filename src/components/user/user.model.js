@@ -72,7 +72,7 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  
+
   request_limit: {
     type: Number,
     default: 5
@@ -92,20 +92,21 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 
 userSchema.methods.generateToken = function () {
   const payload = { id: this._id, type: this.type };
-  const token = jwt.sign(payload, config.get('jwtSecret'), { expiresIn: '7 days' });
+  const token = jwt.sign(payload, config.get('jwtSecret'));
 
   return token;
 };
 
 const User = mongoose.model('User', userSchema);
 
-function validateUser (user) {
+function validateUser(user) {
   const schema = {
     name: Joi.string().required(),
     email: Joi.string().required(),
     password: Joi.string().required(),
     type: Joi.string().valid(Object.values(userTypes)).required(),
-    institution: Joi.string()
+    institution: Joi.string().required(),
+    picture: Joi.string()
   };
 
   return Joi.validate(user, schema);
