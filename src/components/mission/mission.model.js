@@ -39,6 +39,10 @@ const Mission = new Schema({
     type: Boolean,
     default: false
   },
+  visible_to: {
+    type: [{ type: ObjectId, ref: 'User' }],
+    default: []
+  },
   is_grupal: {
     type: Boolean,
     default: false

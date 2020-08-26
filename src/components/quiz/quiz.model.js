@@ -24,6 +24,10 @@ const Quiz = new Schema({
   },
   secret_code: { type: String, default: generateSecretCode },
   is_public: Boolean,
+  visible_to: {
+    type: [{ type: ObjectId, ref: 'User' }],
+    default: []
+  },
   single_answer: {
     type: Boolean,
     default: true

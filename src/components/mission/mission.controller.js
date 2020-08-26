@@ -4,7 +4,20 @@ const mongoose = require('mongoose');
 const _ = require('lodash');
 
 exports.listMissions = async (req, res) => {
-  let query = _.omit(req.query, ['answered']);
+
+  if (Object.keys(req.query).includes('secret_code')){
+    return exports.findPrivateMission(req, res);
+  }
+
+  let query = _.omit(req.query, ['answered', 'is_public']);
+
+  if (Object.keys(req.query).includes('is_public')){
+    const userId = mongoose.Types.ObjectId(req.user.id);
+    query.$or = [
+      {is_public: true},
+      {visible_to: userId}
+    ];
+  }
 
   if (Object.keys(req.query).includes('answered')) {
     if ((!Number(req.query.answered))) {
@@ -35,7 +48,14 @@ exports.findMissionByParams = (req, res) => {
 };
 
 exports.findPublicMissions = (req, res) => {
-  Mission.find({ is_public: true }, async function (err, missions) {
+  const userId = mongoose.Types.ObjectId(req.user.id);
+  var query = {
+    '$or': [
+      {is_public: true},
+      {visible_to: {'$all': [userId]}}
+    ]
+  }
+  Mission.find(query, async function (err, missions) {
     if (err) {
       res.status(400).send(err);
     } else {
@@ -75,24 +95,13 @@ exports.findPrivateMission = (req, res) => {
     } else if (!mission) {
       res.status(404).send('Missão não encontrada');
     } else {
-      let endTime = new Date(mission.end_time);
-      endTime.setHours(23, 59, 0);
-      let date = new Date();
-      let answered;
+        
+      const id = mongoose.Types.ObjectId(req.user.id);
+      mission.visible_to.push(id);
+      await mission.save();
 
-      try {
-        answered = await wasMissionAnswered(mission._id, req.query.user_id);
-      } catch (err) {
-        res.status(400).send(err);
-      }
-
-      if (endTime.toLocaleString() < date.toLocaleString()) {
-        res.status(401).send('Missão expirada');
-      } else if (mission.single_answer && answered) {
-        res.status(401).send('Missão já foi respondida');
-      } else {
-        res.status(200).json(mission);
-      }
+      res.status(200).json(mission);
+      
     }
   });
 };

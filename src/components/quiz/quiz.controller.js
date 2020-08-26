@@ -3,13 +3,46 @@ const Quiz = require('./quiz.model');
 const _ = require('lodash');
 const mongoose = require('mongoose');
 
+function findPrivateQuiz(req, res) {
+  Quiz.findOne({ secret_code: req.query.secret_code }, async function (err, quiz) {
+    if (err) {
+      res.status(400).send(err);
+    } else if (!quiz) {
+      res.status(404).send('Quiz não encontrado');
+    } else {
+        
+      const id = mongoose.Types.ObjectId(req.user.id);
+      quiz.visible_to.push(id);
+      await quiz.save();
+
+      res.status(200).json([quiz]); 
+    }
+  });
+};
+
 exports.listQuizzes = async (req, res) => {
-  let query = _.omit(req.query, ['active', 'answered']);
+
+  if (Object.keys(req.query).includes('secret_code')){
+    return findPrivateQuiz(req, res);
+  }
+
+  let query = _.omit(req.query, ['active', 'answered', 'is_public']);
+
+  if (Object.keys(req.query).includes('is_public')){
+    const userId = mongoose.Types.ObjectId(req.user.id);
+    query.$or = [
+      {is_public: true},
+      {visible_to: userId}
+    ];
+  }
 
   if (Object.keys(req.query).includes('active')) {
     if (Number(req.query.active)) {
       query.start_time = { '$lte': new Date() };
-      query.$or = [{ end_time: null }, { end_time: { '$gte': new Date() } }];
+      query.$or = [
+        { end_time: null },
+        { end_time: { '$gte': new Date() } }
+      ];
     } else {
       query.$or = [
         { start_time: { '$gt': Date.now() } },
