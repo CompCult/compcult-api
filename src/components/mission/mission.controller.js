@@ -9,7 +9,9 @@ exports.listMissions = async (req, res) => {
     return exports.findPrivateMission(req, res);
   }
 
-  let query = _.omit(req.query, ['answered', 'is_public']);
+  let query = _.omit(req.query, ['answered', 'is_public', 'page', 'limit']);
+
+ 
 
   if (Object.keys(req.query).includes('is_public')){
     const userId = mongoose.Types.ObjectId(req.user.id);
@@ -26,8 +28,22 @@ exports.listMissions = async (req, res) => {
     }
   }
 
-  const missions = await Mission.find(query);
-  res.send(missions);
+  if (req.query.page) {
+    if (!req.query.limit) res.status(400).send('A page parameter was passed without limit');
+
+    const config = {
+      page: Number(req.query.page),
+      limit: Number(req.query.limit)
+    };
+
+    const missions = await Mission.paginate(query, config);
+    res.send(missions);
+  } else {
+    const missions = await Mission.find(query);
+    res.send(missions);
+  }
+
+  
 };
 
 exports.getMission = async (req, res) => {

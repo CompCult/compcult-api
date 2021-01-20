@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -53,6 +54,8 @@ const Quiz = new Schema({
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
+
+Quiz.plugin(mongoosePaginate);
 
 Quiz.virtual('active').get(function () {
   return this.end_time

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 var { User, userTypes } = require('../user/user.model.js');
@@ -82,5 +83,7 @@ const Mission = new Schema({
     default: Date.now
   }
 }, { toJSON: {} });
+
+Mission.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Mission', Mission);

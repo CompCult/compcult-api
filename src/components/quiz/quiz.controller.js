@@ -26,7 +26,7 @@ exports.listQuizzes = async (req, res) => {
     return findPrivateQuiz(req, res);
   }
 
-  let query = _.omit(req.query, ['active', 'answered', 'is_public']);
+  let query = _.omit(req.query, ['active', 'answered', 'is_public', 'page', 'limit']);
 
   if (Object.keys(req.query).includes('is_public')){
     const userId = mongoose.Types.ObjectId(req.user.id);
@@ -58,8 +58,21 @@ exports.listQuizzes = async (req, res) => {
     }
   }
 
-  const quizzes = await Quiz.find(query);
-  res.send(quizzes);
+
+  if (req.query.page) {
+    if (!req.query.limit) res.status(400).send('A page parameter was passed without limit');
+
+    const config = {
+      page: Number(req.query.page),
+      limit: Number(req.query.limit)
+    };
+
+    const quizzes = await Quiz.paginate(query, config);
+    res.send(quizzes);
+  } else {
+    const quizzes = await Quiz.find(query);
+    res.send(quizzes);
+  }
 };
 
 exports.getQuiz = (req, res) => {
