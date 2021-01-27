@@ -1,4 +1,5 @@
 const Memory = require('./memory.model');
+const mongoose = require('mongoose');
 const Uploads = require('../../../upload.js');
 const config = require('config');
 const utils = require('../../../utils');

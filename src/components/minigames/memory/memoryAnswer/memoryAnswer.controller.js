@@ -27,6 +27,9 @@ exports.createMemoryAnswer = async (req, res) => {
   });
   const userId = mongoose.Types.ObjectId(req.user.id);
   const memory = await Memory.findById(req.params.memoryId);
+  if(!memory){
+    return res.status(404).send('Jogo não encontrado');
+  }
   memory.users.push(userId);
   await memory.save();
   await memoryAnswer.save();
