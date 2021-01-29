@@ -3,9 +3,20 @@ const _ = require('lodash');
 const mongoose = require('mongoose');
 var Uploads = require('../../upload.js');
 const config = require('config');
+const utils = require('../../utils');
 
 exports.listItems = async (req, res) => {
-  let query = _.omit(req.query, ['active', 'purchased', 'owner', 'page', 'limit']);
+  let query = _.omit(req.query, ['active', 'purchased', 'owner', 'page', 'limit', 'sort', 'order']);
+
+  const regexProperties = ['title'];
+  query = utils.regexQuery(query, regexProperties);
+
+  let sort = {};
+  if(req.query.sort){
+    if(req.query.order && req.query.order != '1' && req.query.order != '-1')
+      res.status(400).send('Order must be 1 or -1');
+    sort[req.query.sort] = req.query.order || 1;
+  }
 
   if (Object.keys(req.query).includes('active')) {
 
@@ -37,6 +48,7 @@ exports.listItems = async (req, res) => {
     if (!req.query.limit) res.status(400).send('A page parameter was passed without limit');
 
     const config = {
+      sort: sort,
       page: Number(req.query.page),
       limit: Number(req.query.limit)
     };
@@ -45,7 +57,7 @@ exports.listItems = async (req, res) => {
     res.send(items);
 
   } else {
-    const items = await StoreItem.find(query);
+    const items = await StoreItem.find(query).sort(sort);
     res.send(items);
   }
 };

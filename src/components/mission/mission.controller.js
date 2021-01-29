@@ -2,6 +2,7 @@ const Mission = require('./mission.model');
 const MissionAnswer = require('../missionAnswer/missionAnswer.model.js');
 const mongoose = require('mongoose');
 const _ = require('lodash');
+const utils = require('../../utils');
 
 exports.listMissions = async (req, res) => {
 
@@ -9,9 +10,16 @@ exports.listMissions = async (req, res) => {
     return exports.findPrivateMission(req, res);
   }
 
-  let query = _.omit(req.query, ['answered', 'is_public', 'page', 'limit']);
+  let query = _.omit(req.query, ['answered', 'is_public', 'page', 'limit', 'sort', 'order']);
+  const regexProperties = ['name'];
+  query = utils.regexQuery(query, regexProperties);
 
- 
+  let sort = {};
+  if(req.query.sort){
+    if(req.query.order && req.query.order != '1' && req.query.order != '-1')
+      res.status(400).send('Order must be 1 or -1');
+    sort[req.query.sort] = req.query.order || 1;
+  }
 
   if (Object.keys(req.query).includes('is_public')){
     const userId = mongoose.Types.ObjectId(req.user.id);
@@ -32,6 +40,7 @@ exports.listMissions = async (req, res) => {
     if (!req.query.limit) res.status(400).send('A page parameter was passed without limit');
 
     const config = {
+      sort: sort,
       page: Number(req.query.page),
       limit: Number(req.query.limit)
     };
@@ -39,10 +48,9 @@ exports.listMissions = async (req, res) => {
     const missions = await Mission.paginate(query, config);
     res.send(missions);
   } else {
-    const missions = await Mission.find(query);
+    const missions = await Mission.find(query).sort(sort);
     res.send(missions);
   }
-
   
 };
 

@@ -8,23 +8,33 @@ const utils = require('../../utils');
 const config = require('config');
 
 async function listUsers(req, res) {
-  const query = _.omit(req.query, ['page', 'limit']);
+  const query = _.omit(req.query, ['page', 'limit', 'sort', 'order']);
   const regexProperties = ['name'];
   const regexQuery = utils.regexQuery(query, regexProperties);
+
+  let sort = {};
+  if(req.query.sort){
+    if(req.query.order && req.query.order != '1' && req.query.order != '-1')
+      res.status(400).send('Order must be 1 or -1');
+    sort[req.query.sort] = req.query.order || 1;
+  }
+  
+  let users;
 
   if (req.query.page) {
     if (!req.query.limit) res.status(400).send('A page parameter was passed without limit');
 
     const config = {
+      sort: sort,
       page: Number(req.query.page),
       limit: Number(req.query.limit)
     };
-    const users = await User.paginate(regexQuery, config);
-    res.send(users);
+    users =  User.paginate(regexQuery, config);
   } else {
-    const users = await User.find(regexQuery);
-    res.send(users);
+    users =  User.find(regexQuery).sort(sort);
   }
+  
+  res.send(await users);
 }
 
 function findUserById(req, res) {

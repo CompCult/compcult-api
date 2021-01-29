@@ -15,7 +15,16 @@ exports.paginate = (page, limit) => {
 
 exports.regexQuery = (query, regProps) => {
   regProps.forEach(prop => {
-    query[prop] = { $regex: new RegExp(query[prop]), $options: 'i' };
+    let value = query[prop];
+    if(value){
+      value = value.replaceAll(RegExp('[aáâàäã]', 'gi'), '[aáâàäã]');
+      value = value.replaceAll(RegExp('[eéêèë]', 'gi'), '[eéêèë]');
+      value = value.replaceAll(RegExp('[iíîìï]', 'gi'), '[iíîìï]');
+      value = value.replaceAll(RegExp('[oóôòöõ]', 'gi'), '[oóôòöõ]');
+      value = value.replaceAll(RegExp('[uúûùü]', 'gi'), '[uúûùü]');
+      value = value.replaceAll(RegExp('[cç]', 'gi'), '[cç]');
+    }
+    query[prop] = { $regex: new RegExp(value), $options: 'i' };
   });
 
   return query;
