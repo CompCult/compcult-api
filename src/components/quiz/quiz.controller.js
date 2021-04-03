@@ -28,6 +28,7 @@ exports.listQuizzes = async (req, res) => {
   }
 
   let query = _.omit(req.query, ['active', 'answered', 'is_public', 'page', 'limit', 'sort', 'order']);
+  query = _.pickBy(query, _.identity);
 
   const regexProperties = ['title'];
   query = utils.regexQuery(query, regexProperties);

@@ -3,6 +3,7 @@ const _ = require('lodash');
 
 exports.listHangmans = async (req, res) => {
   let query = _.omit(req.query, ['answered']);
+  query = _.pickBy(query, _.identity);
 
   // if (Object.keys(req.query).includes('answered')) {
   //   if (!Number(req.query.answered)) {

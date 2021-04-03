@@ -2,12 +2,14 @@ const Memory = require('../memory.model');
 const MemoryAnswer = require('./memoryAnswer.model');
 const { User, userTypes } = require('../../../user/user.model');
 const mongoose = require('mongoose');
+const _ = require('lodash');
 
 exports.listMemoryAnswers = async (req, res) => {
-  const query = {
+  let query = {
     ...req.query,
     _memory: req.params.memoryId
   };
+  query = _.pickBy(query, _.identity);
 
   if (req.query.type === userTypes.STUDENT) {
     query._user = req.user.id;

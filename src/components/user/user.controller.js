@@ -8,10 +8,12 @@ const utils = require('../../utils');
 const config = require('config');
 
 async function listUsers(req, res) {
-  const query = _.omit(req.query, ['page', 'limit', 'sort', 'order']);
+  var query = _.omit(req.query, ['page', 'limit', 'sort', 'order']);
+  query = _.pickBy(query, _.identity);
+  
   const regexProperties = ['name'];
   const regexQuery = utils.regexQuery(query, regexProperties);
-
+  
   let sort = {};
   if(req.query.sort){
     if(req.query.order && req.query.order != '1' && req.query.order != '-1')

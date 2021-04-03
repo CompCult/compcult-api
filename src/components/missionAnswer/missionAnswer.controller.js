@@ -6,6 +6,7 @@ var StoreItem = require('../storeItem/storeItem.model');
 var Uploads = require('../../upload.js');
 const mongoose = require('mongoose');
 const config = require('config');
+const _ = require('lodash');
 
 
 exports.georeferencedanswers = async (req, res) => {
@@ -21,10 +22,11 @@ exports.georeferencedanswers = async (req, res) => {
 };
 
 exports.listMissionAnswers = async (req, res) => {
-  const query = {
+  let query = {
     ...req.query,
     _mission: req.params.missionId
   };
+  query = _.pickBy(query, _.identity);
 
   if (req.query.type === userTypes.STUDENT) {
     query._user = req.user.id;

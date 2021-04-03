@@ -11,6 +11,8 @@ exports.listMissions = async (req, res) => {
   }
 
   let query = _.omit(req.query, ['answered', 'is_public', 'page', 'limit', 'sort', 'order']);
+  query = _.pickBy(query, _.identity);
+  
   const regexProperties = ['name'];
   query = utils.regexQuery(query, regexProperties);
 

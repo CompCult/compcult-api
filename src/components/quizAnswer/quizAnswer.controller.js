@@ -2,12 +2,14 @@ const { User, userTypes } = require('../user/user.model.js');
 const Quiz = require('../quiz/quiz.model.js');
 const QuizAnswer = require('./quizAnswer.model.js');
 const mongoose = require('mongoose');
+const _ = require('lodash');
 
 exports.listQuizAnswers = async (req, res) => {
-  const query = {
+  let query = {
     ...req.query,
     _quiz: req.params.quizId
   };
+  query = _.pickBy(query, _.identity);
 
   if (req.user.type === userTypes.STUDENT) {
     query._user = req.user.id;

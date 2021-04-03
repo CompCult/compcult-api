@@ -29,6 +29,7 @@ exports.listMemories = async (req, res) => {
   }
 
   let query = _.omit(req.query, ['answered', 'is_public']);
+  query = _.pickBy(query, _.identity);
 
   if (Object.keys(req.query).includes('is_public')){
     const userId = mongoose.Types.ObjectId(req.user.id);

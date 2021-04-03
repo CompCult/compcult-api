@@ -2,12 +2,14 @@ const Hangman = require('../hangman.model');
 const HangmanAnswer = require('./hangmanAnswer.model');
 const { User, userTypes } = require('../../../user/user.model');
 const mongoose = require('mongoose');
+const _ = require('lodash');
 
 exports.listHangmanAnswers = async (req, res) => {
-  const query = {
+  let query = {
     ...req.query,
     _hangman: req.params.hangmanId
   };
+  query = _.pickBy(query, _.identity);
 
   if (req.query.type === userTypes.STUDENT) {
     query._user = req.user.id;
